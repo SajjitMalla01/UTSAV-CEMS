@@ -6,50 +6,71 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('events', '0002_alter_event_options_event_image'),
+        ("events", "0002_alter_event_options_event_image"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='event',
-            options={'ordering': ['-created_at']},
+            name="event",
+            options={"ordering": ["-created_at"]},
         ),
         migrations.RemoveField(
-            model_name='event',
-            name='current_registrations',
+            model_name="event",
+            name="current_registrations",
         ),
         migrations.RemoveField(
-            model_name='event',
-            name='image',
+            model_name="event",
+            name="image",
         ),
         migrations.AddField(
-            model_name='event',
-            name='category',
-            field=models.CharField(choices=[('music', 'Music'), ('academic', 'Academic'), ('arts', 'Arts'), ('technology', 'Technology'), ('sports', 'Sports'), ('cultural', 'Cultural')], default='cultural', max_length=20),
+            model_name="event",
+            name="category",
+            field=models.CharField(
+                choices=[
+                    ("music", "Music"),
+                    ("academic", "Academic"),
+                    ("arts", "Arts"),
+                    ("technology", "Technology"),
+                    ("sports", "Sports"),
+                    ("cultural", "Cultural"),
+                ],
+                default="cultural",
+                max_length=20,
+            ),
         ),
         migrations.AddField(
-            model_name='event',
-            name='emoji',
-            field=models.CharField(default='📅', max_length=10),
+            model_name="event",
+            name="emoji",
+            field=models.CharField(default="📅", max_length=10),
         ),
         migrations.AddField(
-            model_name='event',
-            name='gradient',
-            field=models.CharField(default='g-blue', max_length=20),
+            model_name="event",
+            name="gradient",
+            field=models.CharField(default="g-blue", max_length=20),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='capacity',
+            model_name="event",
+            name="capacity",
             field=models.IntegerField(default=100),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='end_time',
+            model_name="event",
+            name="end_time",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='status',
-            field=models.CharField(choices=[('PENDING', 'Pending Review'), ('APPROVED', 'Approved'), ('PUBLISHED', 'Published'), ('REJECTED', 'Rejected'), ('DRAFT', 'Draft')], default='PENDING', max_length=20),
+            model_name="event",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("PENDING", "Pending Review"),
+                    ("APPROVED", "Approved"),
+                    ("PUBLISHED", "Published"),
+                    ("REJECTED", "Rejected"),
+                    ("DRAFT", "Draft"),
+                ],
+                default="PENDING",
+                max_length=20,
+            ),
         ),
     ]

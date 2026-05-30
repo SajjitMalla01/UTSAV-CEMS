@@ -15,14 +15,45 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(choices=[('ADMIN', 'Admin'), ('STAFF', 'Staff'), ('STUDENT', 'Student')], default='STUDENT', max_length=10)),
-                ('college_name', models.CharField(blank=True, max_length=200, null=True)),
-                ('department', models.CharField(blank=True, max_length=100, null=True)),
-                ('phone_number', models.CharField(blank=True, max_length=15, null=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "role",
+                    models.CharField(
+                        choices=[
+                            ("ADMIN", "Admin"),
+                            ("STAFF", "Staff"),
+                            ("STUDENT", "Student"),
+                        ],
+                        default="STUDENT",
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "college_name",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                ("department", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "phone_number",
+                    models.CharField(blank=True, max_length=15, null=True),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

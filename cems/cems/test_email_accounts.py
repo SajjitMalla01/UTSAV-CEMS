@@ -1,6 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 
+
 def test_smtp(username, password, description):
     print(f"\nTesting {description}: {username}")
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -10,12 +11,12 @@ def test_smtp(username, password, description):
         server.ehlo()
         server.login(username, password)
         print("   [SUCCESS] Login successful!")
-        
+
         # Try to send a test mail to the user themselves
         msg = MIMEText("Utsav App Test Email")
-        msg['Subject'] = "Utsav SMTP Test Success"
-        msg['From'] = username
-        msg['To'] = username
+        msg["Subject"] = "Utsav SMTP Test Success"
+        msg["From"] = username
+        msg["To"] = username
         server.sendmail(username, [username], msg.as_string())
         print("   [SUCCESS] Test email sent!")
         server.quit()
@@ -24,12 +25,15 @@ def test_smtp(username, password, description):
         print(f"   [FAILED] {type(e).__name__}: {e}")
         try:
             server.quit()
-        except:
+        except Exception:
             pass
         return False
+
 
 # Test the mallasajjit@gmail.com account
 test_smtp("mallasajjit@gmail.com", "dnbgpmdpziuafzir", "Mallasajjit Account")
 
 # Test the np03cs4a230357@heraldcollege.edu.np account
-test_smtp("np03cs4a230357@heraldcollege.edu.np", "mssfwzidmrajqrnn", "Herald College Account")
+test_smtp(
+    "np03cs4a230357@heraldcollege.edu.np", "mssfwzidmrajqrnn", "Herald College Account"
+)

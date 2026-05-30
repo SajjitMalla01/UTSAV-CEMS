@@ -1,7 +1,7 @@
 import os
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cems.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cems.settings")
 django.setup()
 
 from django.core.mail import send_mail

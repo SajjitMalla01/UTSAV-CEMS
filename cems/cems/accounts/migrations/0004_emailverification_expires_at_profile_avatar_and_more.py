@@ -7,29 +7,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_profile_created_at_profile_department_profile_phone_and_more'),
-        ('tenants', '0001_initial'),
+        (
+            "accounts",
+            "0003_profile_created_at_profile_department_profile_phone_and_more",
+        ),
+        ("tenants", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='emailverification',
-            name='expires_at',
+            model_name="emailverification",
+            name="expires_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='avatar',
-            field=models.ImageField(blank=True, null=True, upload_to='avatars/'),
+            model_name="profile",
+            name="avatar",
+            field=models.ImageField(blank=True, null=True, upload_to="avatars/"),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='bio',
+            model_name="profile",
+            name="bio",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='college',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='profiles', to='tenants.college'),
+            model_name="profile",
+            name="college",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="profiles",
+                to="tenants.college",
+            ),
         ),
     ]

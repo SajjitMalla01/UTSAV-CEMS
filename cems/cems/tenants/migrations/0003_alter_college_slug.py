@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tenants', '0002_remove_college_max_events_remove_college_max_users_and_more'),
+        ("tenants", "0002_remove_college_max_events_remove_college_max_users_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='college',
-            name='slug',
-            field=models.SlugField(help_text='Used in URLs: utsav.app/college-slug/', max_length=100, unique=True),
+            model_name="college",
+            name="slug",
+            field=models.SlugField(
+                help_text="Used in URLs: utsav.app/college-slug/",
+                max_length=100,
+                unique=True,
+            ),
         ),
     ]

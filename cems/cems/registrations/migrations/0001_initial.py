@@ -10,23 +10,57 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('events', '0001_initial'),
+        ("events", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Registration',
+            name="Registration",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('registered_at', models.DateTimeField(auto_now_add=True)),
-                ('status', models.CharField(choices=[('REGISTERED', 'Registered'), ('CANCELLED', 'Cancelled'), ('ATTENDED', 'Attended'), ('ABSENT', 'Absent')], default='REGISTERED', max_length=20)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='registrations', to='events.event')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='registrations', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("registered_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("REGISTERED", "Registered"),
+                            ("CANCELLED", "Cancelled"),
+                            ("ATTENDED", "Attended"),
+                            ("ABSENT", "Absent"),
+                        ],
+                        default="REGISTERED",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="registrations",
+                        to="events.event",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="registrations",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-registered_at'],
-                'unique_together': {('event', 'user')},
+                "ordering": ["-registered_at"],
+                "unique_together": {("event", "user")},
             },
         ),
     ]

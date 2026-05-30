@@ -1,9 +1,10 @@
-import os, sys, django
-os.environ['DJANGO_SETTINGS_MODULE'] = 'cems.settings'
+import os
+import django
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "cems.settings"
 django.setup()
 
 from django.template.loader import get_template
-from django.template.exceptions import TemplateSyntaxError
 from django.core.management import call_command
 from io import StringIO
 
@@ -15,7 +16,7 @@ print("=" * 60)
 print("\n[1] Django System Check...")
 out = StringIO()
 try:
-    call_command('check', stdout=out, stderr=out)
+    call_command("check", stdout=out, stderr=out)
     print("   PASS:", out.getvalue().strip())
 except Exception as e:
     print("   FAIL:", e)
@@ -23,14 +24,16 @@ except Exception as e:
 # 2: Template check
 print("\n[2] Template Syntax Check...")
 import os as _os
-root = 'templates'
+
+root = "templates"
 errs = []
 ok = 0
 for dp, dn, fs in _os.walk(root):
     for f in fs:
-        if not f.endswith('.html'): continue
+        if not f.endswith(".html"):
+            continue
         path = _os.path.join(dp, f)
-        name = _os.path.relpath(path, root).replace('\\', '/')
+        name = _os.path.relpath(path, root).replace("\\", "/")
         try:
             get_template(name)
             ok += 1
@@ -45,7 +48,7 @@ else:
 
 # 3: Import check for all views
 print("\n[3] Views Import Check...")
-for app in ['events.views', 'accounts.views', 'registrations.views', 'tenants.views']:
+for app in ["events.views", "accounts.views", "registrations.views", "tenants.views"]:
     try:
         __import__(app)
         print(f"   PASS: {app}")
@@ -59,7 +62,12 @@ from registrations.models import Registration
 from accounts.models import Profile
 from tenants.models import College
 
-for model, name in [(Event, 'Event'), (Registration, 'Registration'), (Profile, 'Profile'), (College, 'College')]:
+for model, name in [
+    (Event, "Event"),
+    (Registration, "Registration"),
+    (Profile, "Profile"),
+    (College, "College"),
+]:
     try:
         c = model.objects.count()
         print(f"   PASS: {name} ({c} records)")
@@ -68,16 +76,25 @@ for model, name in [(Event, 'Event'), (Registration, 'Registration'), (Profile, 
 
 # 5: URL resolution check
 print("\n[5] URL Resolution Check...")
-from django.test import RequestFactory
 from django.urls import reverse, NoReverseMatch
 
 urls_to_check = [
-    'home', 'event_list', 'event_create',
-    'admin_dashboard', 'staff_dashboard', 'student_dashboard',
-    'login', 'logout', 'register', 'profile',
-    'verify_email', 'resend_verification',
-    'scanner', 'my_registrations',
-    'tenant_home', 'register_college',
+    "home",
+    "event_list",
+    "event_create",
+    "admin_dashboard",
+    "staff_dashboard",
+    "student_dashboard",
+    "login",
+    "logout",
+    "register",
+    "profile",
+    "verify_email",
+    "resend_verification",
+    "scanner",
+    "my_registrations",
+    "tenant_home",
+    "register_college",
 ]
 for url in urls_to_check:
     try:
@@ -88,7 +105,7 @@ for url in urls_to_check:
 
 # 6: Registration model status choices
 print("\n[6] Registration Status Choices...")
-statuses = [s[0] for s in Registration._meta.get_field('status').choices]
+statuses = [s[0] for s in Registration._meta.get_field("status").choices]
 print(f"   Status options: {statuses}")
 
 print("\n" + "=" * 60)

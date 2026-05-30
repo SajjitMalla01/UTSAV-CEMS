@@ -6,29 +6,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tenants', '0001_initial'),
+        ("tenants", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='college',
-            name='max_events',
+            model_name="college",
+            name="max_events",
         ),
         migrations.RemoveField(
-            model_name='college',
-            name='max_users',
+            model_name="college",
+            name="max_users",
         ),
         migrations.RemoveField(
-            model_name='college',
-            name='plan',
+            model_name="college",
+            name="plan",
         ),
         migrations.RemoveField(
-            model_name='college',
-            name='trial_ends_at',
+            model_name="college",
+            name="trial_ends_at",
         ),
         migrations.AlterField(
-            model_name='college',
-            name='status',
-            field=models.CharField(choices=[('ACTIVE', 'Active'), ('SUSPENDED', 'Suspended'), ('CANCELLED', 'Cancelled')], default='ACTIVE', max_length=20),
+            model_name="college",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("ACTIVE", "Active"),
+                    ("SUSPENDED", "Suspended"),
+                    ("CANCELLED", "Cancelled"),
+                ],
+                default="ACTIVE",
+                max_length=20,
+            ),
         ),
     ]

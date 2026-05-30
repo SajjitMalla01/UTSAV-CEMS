@@ -9,45 +9,69 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_remove_profile_college_name_and_more'),
+        ("accounts", "0002_remove_profile_college_name_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="profile",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='profile',
-            name='department',
+            model_name="profile",
+            name="department",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='phone',
+            model_name="profile",
+            name="phone",
             field=models.CharField(blank=True, max_length=15, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='updated_at',
+            model_name="profile",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='profile',
-            name='role',
-            field=models.CharField(choices=[('STUDENT', 'Student'), ('STAFF', 'Staff'), ('ADMIN', 'Admin')], default='STUDENT', max_length=20),
+            model_name="profile",
+            name="role",
+            field=models.CharField(
+                choices=[
+                    ("STUDENT", "Student"),
+                    ("STAFF", "Staff"),
+                    ("ADMIN", "Admin"),
+                ],
+                default="STUDENT",
+                max_length=20,
+            ),
         ),
         migrations.CreateModel(
-            name='EmailVerification',
+            name="EmailVerification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('verification_code', models.CharField(max_length=6)),
-                ('is_verified', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("verification_code", models.CharField(max_length=6)),
+                ("is_verified", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

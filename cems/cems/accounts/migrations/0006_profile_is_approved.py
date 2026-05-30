@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0005_eventcomment'),
+        ("accounts", "0005_eventcomment"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='is_approved',
+            model_name="profile",
+            name="is_approved",
             field=models.BooleanField(default=True),
         ),
     ]

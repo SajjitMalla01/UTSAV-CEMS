@@ -8,29 +8,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('events', '0003_alter_event_options_and_more'),
-        ('registrations', '0001_initial'),
+        ("events", "0003_alter_event_options_and_more"),
+        ("registrations", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='registration',
-            unique_together={('user', 'event')},
+            name="registration",
+            unique_together={("user", "event")},
         ),
         migrations.AddField(
-            model_name='registration',
-            name='notes',
+            model_name="registration",
+            name="notes",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='registration',
-            name='registered_at',
+            model_name="registration",
+            name="registered_at",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='registration',
-            name='status',
-            field=models.CharField(choices=[('REGISTERED', 'Registered'), ('CANCELLED', 'Cancelled'), ('ATTENDED', 'Attended')], default='REGISTERED', max_length=20),
+            model_name="registration",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("REGISTERED", "Registered"),
+                    ("CANCELLED", "Cancelled"),
+                    ("ATTENDED", "Attended"),
+                ],
+                default="REGISTERED",
+                max_length=20,
+            ),
         ),
     ]
