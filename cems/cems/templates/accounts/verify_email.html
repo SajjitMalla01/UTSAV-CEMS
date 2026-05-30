@@ -1,72 +1,72 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Identity Authentication | Agora Security{% endblock %}
+{% block title %}Verify Email{% endblock %}
 
 {% block content %}
-<div class="pt-32 pb-24 px-6 lg:px-12 flex items-center justify-center min-h-[80vh]">
- <div class="w-full max-w-xl">
- 
- <!-- Verification Shield -->
- <div class="bento-panel p-12 relative overflow-hidden text-center bg-white shadow-2xl">
- <div class="absolute top-0 inset-x-0 h-1.5"></div>
- 
- <div class="w-24 h-24 rounded-[2.5rem] bg-indigo-50 text-indigo-600 flex items-center justify-center text-4xl mx-auto mb-10 shadow-xl shadow-indigo-500/10">
- 
- </div>
- 
- <h1 class="text-4xl font-bold text-slate-900 mb-4">Identity Verification</h1>
- <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-12">Email Authentication</p>
- 
- <p class="text-slate-500 text-sm leading-relaxed mb-12">
- We've sent a unique 6-digit verification code to your registered email. <br>Enter the code below to complete your registration.
- </p>
+<div class="min-h-[calc(100vh-3.5rem)] flex items-center justify-center bg-gray-50 px-4 py-12">
+  <div class="w-full max-w-md">
 
- <!-- DEBUG OTP MIRROR (The Fix) -->
- {% if request.session.debug_otp %}
- <div class="mb-12 p-8 bg-amber-50 border border-amber-100 rounded-[2rem] relative group border-2 border-dashed">
- <p class="text-[9px] font-black text-amber-600/60 uppercase tracking-widest mb-4">Development Environment</p>
- <div class="text-5xl font-mono font-black text-amber-900 tracking-[0.4em] translate-x-[0.2em]">{{ request.session.debug_otp }}</div>
- <p class="mt-6 text-[10px] font-bold text-amber-500 uppercase leading-relaxed">
- Email Service Unavailable.<br>Use this code for testing.
- </p>
- </div>
- {% endif %}
+    <!-- Verification Shield -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center relative overflow-hidden">
+      <div class="absolute top-0 inset-x-0 h-1 bg-brand"></div>
+      
+      <div class="w-16 h-16 rounded-full bg-blue-50 text-brand flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </div>
+      
+      <h1 class="text-2xl font-semibold text-gray-900 mb-2">Verify your email</h1>
+      
+      <p class="text-sm text-gray-500 mb-8">
+        We've sent a 6-digit verification code to your email.<br>Enter the code below to complete your registration.
+      </p>
 
- <form method="post" action="{% url 'verify_email' %}" id="otp-form" class="space-y-12">
- {% csrf_token %}
- 
- <!-- Digit Matrix -->
- <div class="flex gap-4 justify-center" id="otp-boxes">
- {% for i in "123456" %}
- <input type="text" name="d{{ i }}" id="otp-{{ i }}"
- maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off"
- class="otp-input w-16 h-20 text-center text-3xl font-mono font-black text-slate-900 border-2 border-slate-100 rounded-2xl focus:outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-all bg-slate-50 focus:bg-white focus:scale-110"
- required>
- {% endfor %}
- </div>
+      <!-- DEBUG OTP MIRROR -->
+      {% if request.session.debug_otp %}
+      <div class="mb-8 p-5 bg-blue-50 border border-blue-200 rounded-xl text-left shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+          <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">Demo / Connection Assist</p>
+        </div>
+        <div class="text-3xl font-mono font-bold text-blue-900 mb-1 tracking-wider">{{ request.session.debug_otp }}</div>
+        <p class="text-xs text-blue-600 leading-relaxed">If you did not receive the verification email or are testing in a local developer sandbox, you can enter the code above to proceed.</p>
+      </div>
+      {% endif %}
 
- <input type="hidden" name="verification_code" id="combined-code">
+      <form method="post" action="{% url 'verify_email' %}" id="otp-form" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Digit Matrix -->
+        <div class="flex gap-2 justify-center" id="otp-boxes">
+          {% for i in "123456" %}
+          <input type="text" name="d{{ i }}" id="otp-{{ i }}"
+            maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off"
+            class="otp-input w-12 h-14 text-center text-xl font-mono font-semibold text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-all bg-white shadow-sm"
+            required>
+          {% endfor %}
+        </div>
 
- <button type="submit" id="verify-btn"
- class="w-full py-6 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl hover:bg-brand transition-all">
- Verify Identity →
- </button>
- </form>
+        <input type="hidden" name="verification_code" id="combined-code">
 
- <div class="mt-12 flex flex-col items-center gap-6">
- <div class="flex items-center gap-4 py-2 px-6 bg-slate-50 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
- <span class="w-1.5 h-1.5 bg-brand rounded-full"></span>
- Window Closes: <span id="timer" class="text-slate-900">30:00</span>
- </div>
- 
- <div class="flex gap-10">
- <a href="{% url 'resend_verification' %}" class="text-[10px] font-black text-brand uppercase tracking-widest hover:underline">Resend Code</a>
- <a href="{% url 'logout' %}" class="text-[10px] font-black text-slate-300 uppercase tracking-widest hover:text-rose-500 transition-colors">Cancel</a>
- </div>
- </div>
- </div>
- 
- </div>
+        <button type="submit" id="verify-btn"
+          class="w-full py-2.5 bg-brand text-white text-sm font-medium rounded-lg hover:bg-brand-dark transition-colors shadow-sm">
+          Verify email
+        </button>
+      </form>
+
+      <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col items-center gap-4">
+        <div class="text-sm text-gray-500">
+          Code expires in: <span id="timer" class="font-medium text-gray-900 font-mono">30:00</span>
+        </div>
+        
+        <div class="flex items-center gap-4 text-sm">
+          <a href="{% url 'resend_verification' %}" class="font-medium text-brand hover:underline">Resend code</a>
+          <span class="text-gray-300">|</span>
+          <a href="{% url 'logout' %}" class="font-medium text-gray-500 hover:text-gray-900">Cancel</a>
+        </div>
+      </div>
+    </div>
+    
+  </div>
 </div>
 {% endblock %}
 
@@ -74,35 +74,36 @@
 <script>
 const inputs = document.querySelectorAll('.otp-input');
 inputs.forEach((inp, i) => {
- inp.addEventListener('input', function() {
- this.value = this.value.replace(/[^0-9]/g, '').slice(-1);
- if (this.value && i < inputs.length - 1) inputs[i + 1].focus();
- updateCombined();
- });
- inp.addEventListener('keydown', function(e) {
- if (e.key === 'Backspace' && !this.value && i > 0) inputs[i - 1].focus();
- });
+  inp.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(-1);
+    if (this.value && i < inputs.length - 1) inputs[i + 1].focus();
+    updateCombined();
+  });
+  inp.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !this.value && i > 0) inputs[i - 1].focus();
+  });
 });
 
 function updateCombined() {
- let code = '';
- inputs.forEach(inp => code += inp.value);
- document.getElementById('combined-code').value = code;
+  let code = '';
+  inputs.forEach(inp => code += inp.value);
+  document.getElementById('combined-code').value = code;
 }
 
 let secs = 30 * 60;
 const timerEl = document.getElementById('timer');
 const interval = setInterval(() => {
- secs--;
- if (secs <= 0) { clearInterval(interval); timerEl.textContent = 'Expired'; return; }
- const m = Math.floor(secs / 60);
- const s = secs % 60;
- timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  secs--;
+  if (secs <= 0) { clearInterval(interval); timerEl.textContent = 'Expired'; return; }
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }, 1000);
 
 document.getElementById('otp-form').addEventListener('submit', function() {
- updateCombined();
- document.getElementById('verify-btn').textContent = 'Authorizing...';
+  updateCombined();
+  document.getElementById('verify-btn').textContent = 'Verifying...';
+  document.getElementById('verify-btn').disabled = true;
 });
 
 inputs[0].focus();

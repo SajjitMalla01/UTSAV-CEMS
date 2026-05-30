@@ -8,7 +8,7 @@ from django.core.management import call_command
 from io import StringIO
 
 print("=" * 60)
-print("CEMS FULL AUDIT REPORT")
+print("UTSAV FULL AUDIT REPORT")
 print("=" * 60)
 
 # 1: Django system check

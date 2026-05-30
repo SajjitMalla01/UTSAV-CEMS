@@ -1,309 +1,273 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}{{ event.title }} | Event Detail{% endblock %}
+{% block title %}{{ event.title }}{% endblock %}
 
 {% block extra_head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>
- .glass-dark { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-</style>
 {% endblock %}
 
 {% block content %}
-<!-- HERO SECTION -->
-<div class="relative h-[600px] w-full flex items-center justify-center overflow-hidden bg-slate-950">
- <!-- Background Layer with elite blending -->
- {% if event.image %}
- <img src="{{ event.image.url }}" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-[1px]" alt="">
- {% else %}
- <div class="absolute inset-0 opacity-80"></div>
- {% endif %}
- 
- <div class="absolute inset-0"></div>
- 
- <!-- Content -->
- <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
- <div class="flex flex-wrap justify-center gap-3 mb-10">
- <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark">
- <span class="w-2 h-2 rounded-full bg-brand"></span>
- <span class="text-[10px] font-black text-white uppercase tracking-[0.3em]">{{ event.get_category_display }}</span>
- </div>
- {% if event.spots_left < 10 and event.spots_left > 0 %}
- <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500 text-white shadow-brand">
- <span class="text-[10px] font-black uppercase tracking-[0.3em]"> Almost Full</span>
- </div>
- {% endif %}
- {% if event.get_registered_count > 20 %}
- <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow-sm">
- <span class="text-[10px] font-black uppercase tracking-[0.3em]"> Popular</span>
- </div>
- {% endif %}
- </div>
- 
- <h1 class="text-7xl md:text-9xl text-slate-900 md:text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
- {{ event.title }}
- </h1>
- 
- <div class="flex flex-wrap justify-center items-center gap-8 text-slate-600 md:text-white/70">
- <div class="flex items-center gap-3">
- <span class="text-2xl"></span>
- <span class="text-xs font-black uppercase tracking-widest">{{ event.venue }}</span>
- </div>
- <div class="hidden md:block w-px h-6 bg-current opacity-20"></div>
- <div class="flex items-center gap-3">
- <span class="text-2xl"></span>
- <span class="text-xs font-black uppercase tracking-widest">{{ event.date_time|date:"l, F d, Y" }}</span>
- </div>
- </div>
- </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+    <a href="{% url 'event_list' %}" class="hover:text-gray-700 transition-colors">Events</a>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <span class="text-gray-900 font-medium truncate">{{ event.title }}</span>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Main content -->
+    <div class="lg:col-span-8 space-y-5">
+
+      <!-- Event header card -->
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {% if event.image %}
+        <img src="{{ event.image.url }}" class="w-full h-48 object-cover" alt="{{ event.title }}">
+        {% else %}
+        <div class="w-full h-24 bg-brand-light flex items-center justify-center border-b border-gray-200">
+          <span class="text-sm font-medium text-brand">{{ event.get_category_display }}</span>
+        </div>
+        {% endif %}
+
+        <div class="p-6">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">{{ event.get_category_display }}</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium
+              {% if event.status == 'PUBLISHED' %}bg-green-100 text-green-700
+              {% elif event.status == 'PENDING' %}bg-amber-100 text-amber-700
+              {% else %}bg-gray-100 text-gray-600{% endif %}">
+              {% if event.status == 'PENDING' %}Pending approval{% else %}{{ event.status|capfirst }}{% endif %}
+            </span>
+            {% if event.is_featured %}<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">Featured</span>{% endif %}
+            {% if event.spots_left < 10 and event.spots_left > 0 %}<span class="text-xs font-medium text-red-600">Almost full</span>{% endif %}
+          </div>
+
+          <h1 class="text-2xl font-semibold text-gray-900 mb-4">{{ event.title }}</h1>
+
+          <!-- Meta grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-t border-b border-gray-100">
+            <div>
+              <p class="text-xs font-medium text-gray-500 mb-1">Time</p>
+              <p class="text-sm font-semibold text-gray-900">{{ event.date_time|time:"H:i" }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-500 mb-1">Entry</p>
+              <p class="text-sm font-semibold text-green-600">Free</p>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-500 mb-1">Spots left</p>
+              <p class="text-sm font-semibold text-brand">{{ event.spots_left }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-500 mb-1">Status</p>
+              <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium">{{ event.status|capfirst }}</span>
+            </div>
+          </div>
+
+          <!-- Location & date -->
+          <div class="flex flex-wrap gap-4 mt-4 text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+              <span>{{ event.venue }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>{{ event.date_time|date:"l, F d, Y" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-3">About this event</h2>
+        <div class="prose prose-sm prose-gray max-w-none text-gray-600 leading-relaxed">
+          {{ event.description|linebreaks }}
+        </div>
+      </div>
+
+      <!-- Staff / Admin actions -->
+      {% if user.is_authenticated and user.profile.role in "STAFF ADMIN" or user.is_superuser %}
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 class="text-sm font-medium text-gray-500 mb-3">Admin actions</h3>
+        <div class="flex flex-wrap gap-2">
+          <a href="{% url 'event_update' event.pk %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Edit event</a>
+          <a href="{% url 'participant_list' event.pk %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">View participants</a>
+          {% if event.status == 'PENDING' %}
+          <form action="{% url 'approve_event' event.pk %}" method="post">{% csrf_token %}
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Approve</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Comments -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-base font-semibold text-gray-900">Comments</h2>
+          <span class="text-sm text-gray-500">{{ event.comments.count }}</span>
+        </div>
+
+        {% if user.is_authenticated %}
+        <form action="{% url 'add_comment' event.pk %}" method="post" class="mb-5">
+          {% csrf_token %}
+          <textarea name="text" rows="3" placeholder="Write a comment…"
+            class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all resize-none mb-2"></textarea>
+          <div class="flex justify-end">
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Post comment</button>
+          </div>
+        </form>
+        {% endif %}
+
+        <div class="space-y-3">
+          {% for c in event.comments.all|dictsortreversed:"created_at" %}
+          <div class="flex gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold text-gray-600 flex-shrink-0">
+              {{ c.user.username|first|upper }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-sm font-medium text-gray-900">{{ c.user.username }}</span>
+                <span class="text-xs text-gray-400">{{ c.created_at|timesince }} ago</span>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">{{ c.text }}</p>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-sm text-gray-500 py-4 text-center">No comments yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="lg:col-span-4 space-y-5">
+
+      <!-- Registration card -->
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        {% if event.status == 'PUBLISHED' %}
+          {% if user_registration %}
+          <!-- Registered -->
+          <div class="text-center">
+            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h3 class="text-base font-semibold text-gray-900 mb-0.5">You're registered</h3>
+            <p class="text-xs text-gray-500 mb-4">Scan the QR code at the event entrance.</p>
+
+            <div class="p-3 bg-white border border-gray-200 rounded-xl inline-block mb-4">
+              <div id="qrcode" class="mx-auto"></div>
+              <p class="text-xs text-gray-400 mt-2">Ref: {{ user_registration.id|truncatechars:8 }}</p>
+            </div>
+
+            <a href="{% url 'student_dashboard' %}" class="flex items-center justify-center gap-1.5 text-sm font-medium text-brand hover:underline">
+              Manage registrations
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+
+          <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const qrContainer = document.getElementById("qrcode");
+            const verifyUrl = window.location.origin + "{% url 'verify_registration' user_registration.pk %}";
+            new QRCode(qrContainer, {
+              text: verifyUrl, width: 140, height: 140,
+              colorDark: "#111827", colorLight: "#ffffff",
+              correctLevel: QRCode.CorrectLevel.H
+            });
+          });
+          </script>
+
+          {% else %}
+          <!-- Enroll CTA -->
+          <h3 class="text-base font-semibold text-gray-900 mb-3">Register for this event</h3>
+
+          <!-- Capacity bar -->
+          <div class="mb-4">
+            <div class="flex justify-between text-xs text-gray-500 mb-1.5">
+              <span>Registered</span>
+              <span>{{ event.get_registered_count }} / {{ event.capacity }}</span>
+            </div>
+            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-brand rounded-full transition-all duration-700" style="width: {% widthratio event.get_registered_count event.capacity|default:1 100 %}%"></div>
+            </div>
+          </div>
+
+          {% if event.is_full %}
+          <div class="w-full py-2.5 px-4 text-sm font-medium text-center text-red-600 bg-red-50 rounded-lg border border-red-200">Registration full</div>
+          {% else %}
+            {% if user.is_authenticated and user.profile.role == 'STUDENT' %}
+            <a href="{% url 'register_event' event.pk %}" class="block w-full py-2.5 px-4 text-sm font-medium text-center text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Register now</a>
+            {% elif not user.is_authenticated %}
+            <a href="{% url 'login' %}" class="block w-full py-2.5 px-4 text-sm font-medium text-center text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Sign in to register</a>
+            {% endif %}
+          {% endif %}
+          {% endif %}
+
+        {% else %}
+        <!-- Not published -->
+        <div class="text-center py-6">
+          <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <h3 class="text-sm font-medium text-gray-500">Registration not open</h3>
+          <p class="text-xs text-gray-400 mt-1">Pending approval</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Organiser info -->
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-xs font-medium text-gray-500 mb-3">Organised by</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-brand-light border border-blue-200 flex items-center justify-center text-sm font-semibold text-brand">
+            {{ event.college.name|first }}
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">{{ event.college.name }}</p>
+            <p class="text-xs text-gray-400">{{ event.college.slug }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-xs font-medium text-gray-500 mb-3">Location</p>
+        <p class="text-sm text-gray-700 mb-3">{{ event.venue }}</p>
+        <a href="https://www.google.com/maps/search/?api=1&query={{ event.venue|urlencode }}" target="_blank"
+          class="flex items-center gap-2 text-sm font-medium text-brand hover:underline">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          Get directions
+        </a>
+        <div class="mt-3 pt-3 border-t border-gray-100">
+          <a href="{% url 'event_list' %}" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">← Back to events</a>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-xs font-medium text-gray-500 mb-3">Share</p>
+        <div class="space-y-2">
+          <a href="https://wa.me/?text=Join me at {{ event.title|urlencode }}! Register: {{ request.build_absolute_uri|urlencode }}" target="_blank"
+            class="flex items-center gap-3 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors text-sm font-medium text-gray-700">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.555 4.116 1.524 5.849L0 24l6.327-1.499A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.922 0-3.714-.524-5.243-1.432l-.376-.224-3.755.889.939-3.638-.246-.394A9.808 9.808 0 012.182 12c0-5.42 4.398-9.818 9.818-9.818 5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:?subject=Join me at {{ event.title|urlencode }}&body=Check out this event: {{ request.build_absolute_uri|urlencode }}"
+            class="flex items-center gap-3 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors text-sm font-medium text-gray-700">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Email
+          </a>
+          <button onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}').then(() => { this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy link', 1500); })"
+            class="w-full flex items-center gap-3 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors text-sm font-medium text-gray-700">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Copy link
+          </button>
+        </div>
+      </div>
+
+    </aside>
+  </div>
 </div>
-
-<!-- CONTENT GRID -->
-<main class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 -mt-32 relative z-20 pb-32">
- 
- <!-- Main Content Panel (Bento Style) -->
- <div class="lg:col-span-8 space-y-12">
- <div class="bg-white rounded-[3rem] p-12 shadow-sm border border-slate-200">
- 
- <!-- Information Bento Grid -->
- <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-slate-50">
- <div class="space-y-2">
- <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Time Detail</p>
- <p class="text-xl font-bold text-slate-900">{{ event.date_time|time:"H:i" }} <span class="text-slate-300 font-normal">GMT</span></p>
- </div>
- <div class="space-y-2">
- <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Entry Access</p>
- <p class="text-xl font-bold text-emerald-600">Free Pass</p>
- </div>
- <div class="space-y-2">
- <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Vacancy</p>
- <p class="text-xl font-bold text-brand">{{ event.spots_left }} <span class="text-slate-300 font-normal">Left</span></p>
- </div>
- <div class="space-y-2">
- <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Status Code</p>
- <span class="inline-block px-3 py-1 bg-slate-950 text-white rounded-lg text-[9px] font-black tracking-widest">{{ event.status }}</span>
- </div>
- </div>
-
- <!-- Description -->
- <div class="py-12">
- <h3 class="text-4xl text-slate-900 mb-8">Event Details</h3>
- <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed text-xl">
- {{ event.description|linebreaks }}
- </div>
- </div>
-
- <!-- Command Center (Staff Only) -->
- {% if user.is_authenticated and user.profile.role in "STAFF ADMIN" or user.is_superuser %}
- <div class="mt-12 p-10 bg-slate-50 rounded-[2.5rem] border border-slate-200 group">
- <div class="flex items-center justify-between mb-8">
- <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-[0.4em]">Admin Actions</h4>
- <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-xs transition-transform"></div>
- </div>
- <div class="flex flex-wrap gap-4">
- <a href="{% url 'event_update' event.pk %}" class="px-8 py-4 bg-white border border-slate-200 rounded-2xl text-xs font-black uppercase tracking-widest shadow-sm hover:shadow-md transition-all"> Edit Event</a>
- <a href="{% url 'participant_list' event.pk %}" class="px-8 py-4 bg-white border border-slate-200 rounded-2xl text-xs font-black uppercase tracking-widest shadow-sm hover:shadow-md transition-all"> Participants</a>
- {% if event.status == 'PENDING' %}
- <form action="{% url 'approve_event' event.pk %}" method="post">{% csrf_token %}
- <button type="submit" class="px-8 py-4 bg-brand text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-brand hover:brightness-110 transition-all"> Approve</button>
- </form>
- {% endif %}
- </div>
- </div>
- {% endif %}
- </div>
-
- <!-- SOCIAL WALL -->
- <section class="bg-white rounded-[3rem] p-12 shadow-sm border border-slate-200">
- <div class="flex items-center justify-between mb-12">
- <h3 class="text-4xl text-slate-900">Comments</h3>
- <div class="px-4 py-2 bg-brand/5 border border-brand/10 rounded-full text-[10px] font-black text-brand uppercase tracking-widest">{{ event.comments.count }} Comments</div>
- </div>
-
- {% if user.is_authenticated %}
- <form action="{% url 'add_comment' event.pk %}" method="post" class="mb-16">
- {% csrf_token %}
- <div class="relative group">
- <textarea name="text" rows="4" placeholder="Write a comment..." 
- class="w-full rounded-[2rem] border border-slate-200 bg-slate-50 p-8 text-slate-700 text-lg focus:outline-none focus:border-brand/30 focus:ring-4 focus:ring-brand/5 transition-all resize-none"></textarea>
- <button type="submit" class="absolute bottom-6 right-6 bg-brand text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-brand hover:shadow-brand-dark transition-all">Publish</button>
- </div>
- </form>
- {% endif %}
-
- <div class="space-y-4">
- {% for c in event.comments.all|dictsortreversed:"created_at" %}
- <div class="flex gap-8 p-8 rounded-[2rem] hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 group">
- <div class="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl font-bold shadow-xl group-hover:scale-110 transition-transform">
- {{ c.user.username|first|upper }}
- </div>
- <div class="flex-1">
- <div class="flex justify-between items-start mb-2">
- <div>
- <span class="text-sm font-black text-slate-900 uppercase tracking-widest">@{{ c.user.username }}</span>
- <span class="mx-3 text-slate-200">/</span>
- <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ c.created_at|timesince }} ago</span>
- </div>
- <div class="w-2 h-2 rounded-full bg-slate-200"></div>
- </div>
- <p class="text-slate-600 text-xl leading-relaxed">"{{ c.text }}"</p>
- </div>
- </div>
- {% empty %}
- <div class="text-center py-16 text-slate-400 text-xl opacity-60">There are no comments yet.</div>
- {% endfor %}
- </div>
- </section>
- </div>
-
- <!-- SIDEBAR (Bento Style) -->
- <aside class="lg:col-span-4 space-y-12">
- 
- <!-- Standard Ticket UI -->
- <div class="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-200 relative overflow-hidden">
- <div class="absolute top-0 left-0 w-full h-3"></div>
- 
- {% if event.status == 'PUBLISHED' %}
- {% if user_registration %}
- <!-- ACTIVE TICKET -->
- <div class="text-center">
- <div class="w-24 h-24 bg-emerald-50 rounded-[2rem] mx-auto flex items-center justify-center text-5xl mb-8"></div>
- <h4 class="text-3xl font-bold text-slate-900 mb-2">Registered</h4>
- <p class="text-[10px] font-black text-slate-400 mb-10 uppercase tracking-[0.4em]">Entry Pass</p>
- 
- <!-- Standard QR Module -->
- <div class="p-8 bg-slate-950 rounded-[3rem] shadow-2xl inline-block mb-10 group">
- <div id="qrcode" class="mx-auto" style="padding: 12px; background: white; border-radius: 1.5rem;"></div>
- <div class="mt-6 flex flex-col items-center">
- <div class="w-12 h-1 bg-white/20 rounded-full mb-3"></div>
- <p class="text-[8px] font-black text-white/40 uppercase tracking-[0.5em]">AUTH-TOKEN: {{ user_registration.id|truncatechars:8 }}</p>
- </div>
- </div>
-
- <a href="{% url 'student_dashboard' %}" class="flex items-center justify-center gap-3 w-full py-5 text-sm font-black uppercase tracking-widest text-slate-500 hover:text-brand transition-all">
- Manage Credentials <span class="text-xl">→</span>
- </a>
- </div>
- 
- <script>
- document.addEventListener('DOMContentLoaded', () => {
- const qrContainer = document.getElementById("qrcode");
- const verifyUrl = window.location.origin + "{% url 'verify_registration' user_registration.pk %}";
- new QRCode(qrContainer, {
- text: verifyUrl,
- width: 160,
- height: 160,
- colorDark : "#0f172a",
- colorLight : "#ffffff",
- correctLevel : QRCode.CorrectLevel.H
- });
- });
- </script>
-
- {% else %}
- <!-- ENROLLMENT CTA -->
- <div class="text-center">
- <div class="flex justify-between items-end mb-4">
- <h4 class="text-4xl font-bold text-slate-900">Attend</h4>
- <span class="text-[9px] font-black text-brand uppercase tracking-widest">Public Access</span>
- </div>
- <div class="h-3 bg-slate-50 border border-slate-100 rounded-full mb-4 overflow-hidden p-0.5">
- <div class="h-full bg-brand rounded-full transition-all duration-1000" style="width: {% widthratio event.get_registered_count event.capacity|default:1 100 %}%"></div>
- </div>
- <div class="flex justify-between text-[9px] font-black text-slate-400 mb-10 uppercase tracking-widest">
- <span>Reserved: {{ event.get_registered_count }}</span>
- <span>Limit: {{ event.capacity }}</span>
- </div>
- 
- {% if event.is_full %}
- <div class="py-6 bg-rose-50 text-rose-600 rounded-[2rem] font-black text-xs uppercase tracking-widest border border-rose-100"> Registration Terminated</div>
- {% else %}
- <a href="{% url 'register_event' event.pk %}" class="block w-full py-6 bg-brand text-white font-black uppercase tracking-widest rounded-[2rem] shadow-brand hover:shadow-brand-dark transition-all">
- Secure Entry →
- </a>
- {% endif %}
- </div>
- {% endif %}
- {% else %}
- <!-- UNAVAILABLE STATE -->
- <div class="text-center py-16">
- <div class="w-20 h-20 bg-slate-50 rounded-full mx-auto flex items-center justify-center text-4xl mb-6"></div>
- <h4 class="text-3xl text-slate-300">Not Available</h4>
- <p class="text-[10px] font-black text-slate-400 mt-4 uppercase tracking-[0.2em]">Pending Approval</p>
- </div>
- {% endif %}
- </div>
-
- <!-- Meta Section (Bento Grid) -->
- <div class="space-y-6">
- <!-- Organizer Info -->
- <div class="bg-slate-900 rounded-[3rem] p-8 text-white relative overflow-hidden group">
- <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 transition-transform"></div>
- <p class="text-[9px] font-black uppercase text-white/30 tracking-[0.4em] mb-8">Lead Institution</p>
- <div class="flex items-center gap-6">
- <div class="w-16 h-16 rounded-[1.5rem] bg-white text-slate-950 flex items-center justify-center text-2xl font-black">
- {{ event.college.name|first }}
- </div>
- <div>
- <h5 class="text-2xl">{{ event.college.name }}</h5>
- <p class="text-[9px] text-white/40 font-black uppercase tracking-widest">{{ event.college.slug }} network</p>
- </div>
- </div>
- </div>
-
- <!-- Navigation Links -->
- <div class="bg-white rounded-[3rem] p-8 shadow-sm border border-slate-200">
- <p class="text-[9px] font-black uppercase text-slate-400 tracking-[0.4em] mb-6">Location Map</p>
- <div class="space-y-3">
- <a href="https://www.google.com/maps/search/?api=1&query={{ event.venue|urlencode }}" target="_blank" 
- class="flex items-center justify-between group p-6 bg-slate-50 rounded-[2rem] hover:bg-slate-100 border border-slate-200 transition-all">
- <div class="flex items-center gap-4">
- <span class="text-2xl transition-transform"></span>
- <span class="text-[10px] font-black uppercase tracking-widest text-slate-700">Get Directions</span>
- </div>
- <span class="text-slate-400 group-hover:text-brand transition-all">→</span>
- </a>
- <a href="{% url 'event_list' %}" class="block text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-slate-900 transition-colors py-4">Back to Events</a>
- </div>
- </div>
-
- <!-- Network Amplification (Social) -->
- <div class="rounded-[3rem] p-8 text-white shadow-sm bg-slate-900 relative overflow-hidden group">
- <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl transition-all"></div>
- 
- <p class="text-[9px] font-black uppercase text-white/50 tracking-[0.4em] mb-6 relative z-10">Share Event</p>
- 
- <div class="space-y-3 relative z-10">
- <!-- WhatsApp -->
- <a href="https://wa.me/?text=Join me at {{ event.title|urlencode }}! %0A%0ARegister here: {{ request.build_absolute_uri|urlencode }}" target="_blank"
- class="flex items-center justify-between p-5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-[2rem] border border-white/5 transition-all">
- <div class="flex items-center gap-4">
- <span class="text-xl"></span>
- <span class="text-[10px] font-black uppercase tracking-widest">WhatsApp</span>
- </div>
- </a>
- 
- <!-- Email -->
- <a href="mailto:?subject=Join me at {{ event.title|urlencode }}&body=Check out this event: {{ request.build_absolute_uri|urlencode }}"
- class="flex items-center justify-between p-5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-[2rem] border border-white/5 transition-all">
- <div class="flex items-center gap-4">
- <span class="text-xl"></span>
- <span class="text-[10px] font-black uppercase tracking-widest">Email Invite</span>
- </div>
- </a>
-
- <!-- Copy Link -->
- <button onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link Copied to Clipboard!');"
- class="w-full flex items-center justify-between p-5 bg-black/20 hover:bg-black/30 backdrop-blur-md rounded-[2rem] border border-white/5 transition-all">
- <div class="flex items-center gap-4">
- <span class="text-xl"></span>
- <span class="text-[10px] font-black uppercase tracking-widest">Copy URL</span>
- </div>
- </button>
- </div>
- </div>
- </div>
-
- </aside>
-</main>
 {% endblock %}

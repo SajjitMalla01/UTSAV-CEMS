@@ -22,7 +22,7 @@ class TenantMiddleware:
         
         # 1. Detection by Subdomain (e.g., herald.localhost)
         # Assuming main host is localhost or 127.0.0.1 or a production domain
-        main_hosts = ['localhost', '127.0.0.1', 'cems.app'] 
+        main_hosts = ['localhost', '127.0.0.1', 'utsav.app', 'cems.app'] 
         if host not in main_hosts:
             # Extract subdomain
             subdomain = host.split('.')[0]

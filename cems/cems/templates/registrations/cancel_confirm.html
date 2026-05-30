@@ -1,44 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Revoke Entry | {{ registration.event.title }}{% endblock %}
+{% block title %}Cancel Registration | {{ registration.event.title }}{% endblock %}
 
 {% block content %}
-<div class="pt-32 pb-24 px-6 lg:px-12 max-w-2xl mx-auto">
- <div class="bento-panel p-12 text-center relative overflow-hidden">
- <div class="absolute top-0 inset-x-0 h-1.5 bg-rose-500"></div>
- 
- <div class="w-24 h-24 rounded-[2.5rem] bg-rose-50 text-rose-500 flex items-center justify-center text-4xl mx-auto mb-10 shadow-xl shadow-rose-500/10">
- 
- </div>
- 
- <h1 class="text-4xl font-bold text-slate-900 mb-4">Revoke Registration?</h1>
- <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-12">Institutional Node De-Authorization</p>
- 
- <div class="bg-slate-50 rounded-[2.5rem] p-10 mb-12">
- <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Target Experience</p>
- <h2 class="text-2xl font-bold text-slate-800">{{ registration.event.title }}</h2>
- <div class="mt-6 flex items-center justify-center gap-4 text-xs font-bold text-slate-500">
- <span>{{ registration.event.date_time|date:"M d, Y" }}</span>
- <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
- <span class="text-rose-500">Status: Active</span>
- </div>
- </div>
- 
- <div class="space-y-4">
- <form method="post">
- {% csrf_token %}
- <button type="submit" class="w-full py-5 bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-rose-500/20 hover:brightness-110 transition-all">
- Confirm De-Authorization
- </button>
- </form>
- <a href="{% url 'student_dashboard' %}" class="block w-full py-5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all">
- Retain Slot
- </a>
- </div>
- 
- <p class="mt-12 text-[9px] font-black text-slate-300 uppercase tracking-widest leading-relaxed">
- Warning: This action is permanent. Your unique slot will be released<br>back into the institutional pool immediately.
- </p>
- </div>
+<div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center relative overflow-hidden">
+    <div class="absolute top-0 inset-x-0 h-1 bg-red-500"></div>
+    
+    <div class="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-6">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    
+    <h1 class="text-2xl font-semibold text-gray-900 mb-2">Cancel Registration?</h1>
+    <p class="text-sm text-gray-500 mb-8">Are you sure you want to cancel your registration for this event?</p>
+    
+    <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-100 text-left">
+      <p class="text-xs font-medium text-gray-500 mb-1">Event details</p>
+      <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ registration.event.title }}</h2>
+      <div class="flex items-center gap-3 text-sm text-gray-600">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span>{{ registration.event.date_time|date:"M d, Y" }}</span>
+      </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="{% url 'student_dashboard' %}" class="flex-1 py-2.5 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors">
+        Keep registration
+      </a>
+      <form method="post" class="flex-1">
+        {% csrf_token %}
+        <button type="submit" class="w-full py-2.5 bg-red-600 text-white font-medium rounded-lg shadow-sm hover:bg-red-700 transition-colors">
+          Yes, cancel it
+        </button>
+      </form>
+    </div>
+    
+    <p class="mt-8 text-xs text-gray-400 max-w-xs mx-auto">
+      Note: This action cannot be undone. Your spot will be released to other students.
+    </p>
+  </div>
 </div>
 {% endblock %}

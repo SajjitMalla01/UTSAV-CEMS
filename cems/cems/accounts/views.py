@@ -51,7 +51,7 @@ def _send_verification_email(user, code):
     from django.template.loader import render_to_string
     from django.utils.html import strip_tags
 
-    subject = 'Your CEMS Verification Code'
+    subject = 'Your UTSAV Verification Code'
     context = {
         'user': user,
         'code': code,
@@ -69,11 +69,11 @@ def _send_verification_email(user, code):
             html_message=html_message,
             fail_silently=False,
         )
-        print(f"[CEMS EMAIL] Verification code sent to {user.email}")
+        print(f"[UTSAV EMAIL] Verification code sent to {user.email}")
         return True
     except Exception as exc:
-        print(f"[CEMS EMAIL ERROR] Could not send to {user.email}: {exc}")
-        print(f"[CEMS EMAIL FALLBACK] Code for {user.username}: {code}")
+        print(f"[UTSAV EMAIL ERROR] Could not send to {user.email}: {exc}")
+        print(f"[UTSAV EMAIL FALLBACK] Code for {user.username}: {code}")
         return False
 
 
@@ -161,14 +161,13 @@ def register(request, college_slug=None):
             if email_sent:
                 messages.success(
                     request,
-                    f'Account created! A 6-digit verification code was sent to {user.email}.'
+                    f'Account created! A 6-digit verification code has been sent to {user.email}.'
                 )
             else:
-                messages.info(
+                messages.success(
                     request,
-                    f'Account created! (Email service failed) Your debug code is: {code}'
+                    f'Account created! Please verify your email to complete registration.'
                 )
-                # Store code in session as fallback if SMTP fails
                 request.session['debug_otp'] = code
 
             return redirect('verify_email')
@@ -326,7 +325,7 @@ def verify_email(request):
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             del request.session['pending_user_id']
-            messages.success(request, 'Email verified! Welcome to CEMS.')
+            messages.success(request, 'Email verified! Welcome to UTSAV.')
             return _redirect_by_role(user)
 
         except EmailVerification.DoesNotExist:
@@ -417,6 +416,12 @@ def approve_staff(request, user_id):
         return redirect('home')
         
     staff_profile = get_object_or_404(Profile, user_id=user_id, role='STAFF')
+    
+    # Secure scoping: College admins can only approve staff of their own college
+    if not request.user.is_superuser and staff_profile.college != request.user.profile.college:
+        messages.error(request, 'Permission denied: Cannot approve staff for another college.')
+        return redirect('admin_dashboard')
+        
     staff_profile.is_approved = True
     staff_profile.save()
     
@@ -432,6 +437,12 @@ def reject_staff(request, user_id):
         return redirect('home')
         
     staff_profile = get_object_or_404(Profile, user_id=user_id, role='STAFF')
+    
+    # Secure scoping: College admins can only reject staff of their own college
+    if not request.user.is_superuser and staff_profile.college != request.user.profile.college:
+        messages.error(request, 'Permission denied: Cannot reject staff for another college.')
+        return redirect('admin_dashboard')
+        
     username = staff_profile.user.username
     staff_profile.user.delete() # Deleting user deletes profile
     

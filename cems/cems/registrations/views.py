@@ -179,8 +179,16 @@ def approve_registration(request, registration_id):
     """Staff view to approve a pending registration."""
     reg = get_object_or_404(Registration, pk=registration_id)
     
-    if not (request.user.is_superuser or request.user.profile.is_staff or getattr(request.user.profile, 'is_admin', False)):
-        messages.error(request, 'Permission denied.')
+    # Secure scoping check: Super Admin or Staff/Admin of the same college
+    is_global_admin = request.user.is_superuser
+    is_college_member = False
+    try:
+        profile = request.user.profile
+        is_college_member = (profile.role in ['STAFF', 'ADMIN'] and profile.college == reg.event.college)
+    except: pass
+
+    if not (is_global_admin or is_college_member):
+        messages.error(request, 'Permission denied: Cannot manage registrations for another college.')
         return redirect('home')
 
     if reg.status == 'PENDING':
@@ -197,8 +205,16 @@ def reject_registration(request, registration_id):
     """Staff view to reject a pending registration."""
     reg = get_object_or_404(Registration, pk=registration_id)
     
-    if not (request.user.is_superuser or request.user.profile.is_staff or getattr(request.user.profile, 'is_admin', False)):
-        messages.error(request, 'Permission denied.')
+    # Secure scoping check: Super Admin or Staff/Admin of the same college
+    is_global_admin = request.user.is_superuser
+    is_college_member = False
+    try:
+        profile = request.user.profile
+        is_college_member = (profile.role in ['STAFF', 'ADMIN'] and profile.college == reg.event.college)
+    except: pass
+
+    if not (is_global_admin or is_college_member):
+        messages.error(request, 'Permission denied: Cannot manage registrations for another college.')
         return redirect('home')
 
     if reg.status == 'PENDING':
@@ -212,15 +228,20 @@ def reject_registration(request, registration_id):
 @login_required
 def verify_registration(request, registration_id):
     """Secure endpoint for staff to mark attendance via QR scan or manual click."""
-    try:
-        if not (request.user.is_superuser or request.user.profile.is_staff or request.user.profile.is_admin):
-            messages.error(request, 'Access denied.')
-            return redirect('home')
-    except Exception:
-        return redirect('home')
-
     registration = get_object_or_404(Registration, pk=registration_id)
     
+    # Secure scoping check: Super Admin or Staff/Admin of the same college
+    is_global_admin = request.user.is_superuser
+    is_college_member = False
+    try:
+        profile = request.user.profile
+        is_college_member = (profile.role in ['STAFF', 'ADMIN'] and profile.college == registration.event.college)
+    except: pass
+
+    if not (is_global_admin or is_college_member):
+        messages.error(request, 'Access denied: Cannot verify tickets for another college.')
+        return redirect('home')
+
     if request.method == 'POST':
         if registration.status == 'REGISTERED':
             registration.status = 'ATTENDED'
@@ -243,22 +264,35 @@ def verify_registration(request, registration_id):
 @login_required
 def scanner_view(request):
     """Renders the QR camera scanner interface for staff."""
-    if not (request.user.is_superuser or request.user.profile.is_staff or getattr(request.user.profile, 'is_admin', False)):
+    # Secure scoping check: Super Admin or Staff/Admin of any active college
+    is_global_admin = request.user.is_superuser
+    is_college_member = False
+    try:
+        profile = request.user.profile
+        is_college_member = (profile.role in ['STAFF', 'ADMIN'])
+    except: pass
+
+    if not (is_global_admin or is_college_member):
         messages.error(request, 'Access denied. Staff only.')
         return redirect('home')
     return render(request, 'registrations/scanner.html')
+
 
 @login_required
 def export_participants_csv(request, event_id):
     """Staff view to export event participants as a CSV file."""
     event = get_object_or_404(Event, pk=event_id)
 
+    # Secure scoping check: Super Admin or Staff/Admin of the same college
+    is_global_admin = request.user.is_superuser
+    is_college_member = False
     try:
-        if not (request.user.is_superuser or getattr(request.user.profile, 'is_staff', False) or getattr(request.user.profile, 'is_admin', False)):
-            messages.error(request, 'Access denied.')
-            return redirect('event_detail', pk=event_id)
-    except Exception:
-        messages.error(request, 'Access denied.')
+        profile = request.user.profile
+        is_college_member = (profile.role in ['STAFF', 'ADMIN'] and profile.college == event.college)
+    except: pass
+
+    if not (is_global_admin or is_college_member):
+        messages.error(request, 'Access denied: Cannot export data for another college.')
         return redirect('event_detail', pk=event_id)
 
     regs = Registration.objects.filter(event=event).select_related('user', 'user__profile').order_by('-registered_at')

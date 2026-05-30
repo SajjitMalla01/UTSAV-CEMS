@@ -5,7 +5,7 @@ import uuid
 
 class College(models.Model):
     """
-    Represents a college/institution that uses CEMS.
+    Represents a college/institution that uses UTSAV.
     Each college is a tenant — isolated data, own branding, own users.
     """
     STATUS_CHOICES = [
@@ -17,7 +17,7 @@ class College(models.Model):
     id            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name          = models.CharField(max_length=200, unique=True)
     slug          = models.SlugField(max_length=100, unique=True,
-                                     help_text='Used in URLs: cems.app/college-slug/')
+                                     help_text='Used in URLs: utsav.app/college-slug/')
     domain        = models.CharField(max_length=200, blank=True,
                                      help_text='Custom domain if any, e.g. events.herald.edu.np')
     logo_url      = models.URLField(blank=True)

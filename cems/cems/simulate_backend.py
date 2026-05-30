@@ -10,11 +10,11 @@ from registrations.models import Registration
 
 try:
     admin = User.objects.get(username='demo_admin')
-    staff = User.objects.get(username='demo_staff')
-    stud = User.objects.get(username='demo_stud')
+    staff = User.objects.get(username='demo_staff1')
+    stud = User.objects.get(username='utsav_student')
 
     print("========================================")
-    print("      CEMS AUTOMATED FLOW START         ")
+    print("      UTSAV SYSTEM DIAGNOSTIC START      ")
     print("========================================")
 
     # 1. Check for the event staff just created
@@ -27,11 +27,11 @@ try:
         from django.utils import timezone
         import datetime
         event = Event.objects.create(
-            title='Agentic AI Revolution',
-            description='A fully automated simulation of event creation workflows driven by an LLM backend.',
-            date_time=timezone.now() + datetime.timedelta(days=1),
-            venue='Virtual Matrix Hub',
-            capacity=300,
+            title='Inter-College Tech Hackathon',
+            description='An intensive 24-hour coding challenge where students from various colleges collaborate to build innovative real-world software solutions.',
+            date_time=timezone.now() + datetime.timedelta(days=2),
+            venue='Main Computer Lab & Seminar Hall',
+            capacity=150,
             category='technology',
             created_by=staff,
             college=college,

@@ -2,21 +2,29 @@
 {% block title %}Confirm Account Deletion{% endblock %}
 
 {% block content %}
-<div class="max-w-xl mx-auto px-4 py-20 text-center">
- <div class="p-12 glass rounded-[3rem] shadow-2xl border-rose-100">
- <div class="w-20 h-20 bg-rose-100 text-rose-600 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-glow"></div>
- <h2 class="text-4xl font-extrabold tracking-tight mb-4">Are you absolutely sure?</h2>
- <p class="text-slate-500 mb-8 font-medium italic">"Once your account is deleted, all your registrations, event history, and thoughts will be permanently erased. This action is irreversible."</p>
- 
- <form method="post" class="space-y-4">
- {% csrf_token %}
- <button type="submit" class="w-full py-5 bg-rose-600 text-white rounded-[2rem] font-black uppercase tracking-[0.2em] shadow-lg hover:bg-rose-700 transition-all">
- Terminate Account
- </button>
- <a href="{% url 'profile' %}" class="block w-full py-5 text-slate-400 font-bold hover:text-slate-900 transition-all uppercase tracking-widest text-[0.6rem]">
- No, Keep My Account Safe
- </a>
- </form>
- </div>
+<div class="max-w-lg mx-auto px-4 py-16 text-center">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 relative overflow-hidden">
+    <div class="absolute top-0 inset-x-0 h-1 bg-red-500"></div>
+    
+    <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    
+    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Delete your account?</h2>
+    
+    <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-8 text-left">
+      <p class="text-sm text-gray-700">Once your account is deleted, all your registrations and event history will be permanently erased. <strong>This action cannot be undone.</strong></p>
+    </div>
+    
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      <button type="submit" class="w-full py-2.5 bg-red-600 text-white rounded-lg text-sm font-medium shadow-sm hover:bg-red-700 transition-colors">
+        Yes, delete my account
+      </button>
+      <a href="{% url 'profile' %}" class="block w-full py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+        Cancel
+      </a>
+    </form>
+  </div>
 </div>
 {% endblock %}

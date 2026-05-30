@@ -1,63 +1,54 @@
 {% extends 'base.html' %}
-{% block title %}Admin Portal{% endblock %}
+{% block title %}Select College{% endblock %}
 
 {% block content %}
-<div class="min-h-[calc(100vh-64px)] bg-slate-50 flex flex-col items-center justify-center p-6 relative overflow-hidden">
- <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
- </div>
+<div class="min-h-[calc(100vh-4rem)] bg-gray-50 flex flex-col items-center justify-center p-6">
+  <div class="w-full max-w-5xl">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl sm:text-4xl text-gray-900 font-bold mb-3">Select your college</h1>
+      <p class="text-gray-500 max-w-xl mx-auto text-sm sm:text-base">Choose your institution to access the administrative dashboard, manage events, and oversee campus activities.</p>
+    </div>
 
- <div class="relative z-10 w-full max-w-5xl text-center">
- <div class="mb-12">
- <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm mb-6">
- <span class="w-2 h-2 rounded-full bg-brand"></span>
- <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Administrative Portal</span>
- </div>
- <h1 class="text-4xl md:text-5xl text-slate-900 font-bold mb-4">Choose your campus.</h1>
- <p class="text-slate-500 max-w-2xl mx-auto text-lg">Select your institution to access the administrative dashboard, manage events, and oversee campus activities.</p>
- </div>
+    <!-- COLLEGES SIDE BY SIDE -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      {% for college in colleges %}
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-8 flex flex-col items-center text-center">
+        
+        <div class="w-20 h-20 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-2xl mb-6">
+          {% if college.logo_url %}
+            <img src="{{ college.logo_url }}" alt="{{ college.name }}" class="w-12 h-12 object-contain">
+          {% else %}
+            <span class="font-bold text-gray-400">{{ college.name|first|upper }}</span>
+          {% endif %}
+        </div>
 
- <!-- COLLEGES SIDE BY SIDE -->
- <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 px-4">
- {% for college in colleges %}
- <div class="bento-panel group relative p-10 flex flex-col items-center text-center">
- 
- <div class="w-24 h-24 rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-4xl mb-8 group-hover:bg-white transition-colors">
- {% if college.logo_url %}
- <img src="{{ college.logo_url }}" alt="{{ college.name }}" class="w-16 h-16 object-contain">
- {% else %}
- <span class="font-bold text-slate-300">C</span>
- {% endif %}
- </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ college.name }}</h3>
+        <p class="text-gray-500 text-sm mb-8 line-clamp-2">{{ college.address|default:"Location not specified" }}</p>
 
- <h3 class="text-2xl font-bold text-slate-900 mb-4">{{ college.name }}</h3>
- <p class="text-slate-400 text-sm mb-10 leading-relaxed">{{ college.address|linebreaksbr|default:"Institution of Academic Excellence" }}</p>
+        <div class="mt-auto w-full">
+          <form action="{% url 'login_college_scoped' college.slug %}" method="get">
+            <button type="submit" class="w-full py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
+              Access Admin Portal
+            </button>
+          </form>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Placeholder if no colleges exist -->
+      <div class="col-span-full py-16 text-center bg-white rounded-xl border border-gray-200">
+        <p class="text-gray-500 text-sm">No colleges configured yet.</p>
+      </div>
+      {% endfor %}
+    </div>
 
- <div class="mt-auto w-full space-y-3">
- <form action="{% url 'login_college_scoped' college.slug %}" method="get">
- <button type="submit" class="w-full py-4 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl hover:bg-brand transition-all">
- Admin Sign In
- </button>
- </form>
- <p class="text-[9px] uppercase font-black tracking-[0.3em] text-slate-400">Dedicated Admin Access</p>
- </div>
- </div>
- {% empty %}
- <!-- Placeholder if no colleges exist -->
- <div class="col-span-full py-20 text-center">
- <p class="text-white/30 text-lg">No colleges configured yet. Please use the terminal or admin panel to add them.</p>
- </div>
- {% endfor %}
- </div>
-
- <!-- GLOBAL ADMIN LINK -->
- <div class="pt-8 border-t border-slate-200 flex flex-col items-center">
- <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">Looking for something else?</p>
- <div class="flex gap-4">
- <a href="{% url 'login' %}" class="text-[10px] font-black uppercase tracking-widest text-brand hover:underline transition-colors">Student Login</a>
- <span class="text-slate-300">•</span>
- <a href="/admin/" class="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-brand transition-colors">System Admin</a>
- </div>
- </div>
- </div>
+    <!-- GLOBAL ADMIN LINK -->
+    <div class="pt-8 flex flex-col items-center gap-4">
+      <div class="flex items-center gap-4 text-sm font-medium">
+        <a href="{% url 'login' %}" class="text-brand hover:underline">Student Login</a>
+        <span class="text-gray-300">|</span>
+        <a href="/admin/" class="text-gray-600 hover:text-gray-900 transition-colors">System Admin</a>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

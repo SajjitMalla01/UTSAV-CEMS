@@ -26,8 +26,8 @@ def simulate():
     csrf = get_csrf_token(staff_session, login_url)
     resp = staff_session.post(login_url, data={
         'csrfmiddlewaretoken': csrf,
-        'username': 'demo_staff',
-        'password': 'admin123!'
+        'username': 'demo_staff1',
+        'password': 'UtsavPass123!'
     }, headers={'Referer': login_url})
     
     if "Welcome back" not in resp.text and resp.status_code == 200:
@@ -40,21 +40,20 @@ def simulate():
         print("   OK - Staff Logged in successfully!")
 
     # 2. Staff Creates an Event
-    print("[Step 3] Staff creating a new event 'Automated Systems Workshop'...")
+    print("[Step 3] Staff creating a new event 'Annual Sports & Athletics Meet'...")
     create_url = f"{BASE_URL}/events/create/"
     csrf = get_csrf_token(staff_session, create_url)
     resp = staff_session.post(create_url, data={
         'csrfmiddlewaretoken': csrf,
-        'title': 'Automated Systems Workshop',
-        'description': 'A workshop demonstrating automated event creation and approval workflows for evaluation purposes.',
+        'title': 'Annual Sports & Athletics Meet',
+        'description': 'Join the ultimate inter-college track, field, and sports championship. Cheer for your teams and participate in competitive events.',
         'date_time': '2026-10-15T10:00',
         'end_time': '2026-10-15T17:00',
-        'venue': 'Virtual Matrix Hub',
-        'capacity': '300',
-        'category': 'technology',
-        # Use a neutral glyph or leave blank; avoid 'AI' which looks synthetic
-        'emoji': '📌',
-        'gradient': 'g-slate'
+        'venue': 'Campus Main Sports Ground',
+        'capacity': '500',
+        'category': 'sports',
+        'emoji': '🏆',
+        'gradient': 'g-rose'
     }, headers={'Referer': create_url})
     
     # Check if event was created. Usually redirect happens.
@@ -97,7 +96,7 @@ def simulate():
     admin_session.post(login_url, data={
         'csrfmiddlewaretoken': csrf,
         'username': 'demo_admin',
-        'password': 'admin123!'
+        'password': 'UtsavPass123!'
     }, headers={'Referer': login_url})
     print("   OK - Admin Logged in.")
 
@@ -112,8 +111,8 @@ def simulate():
     csrf = get_csrf_token(student_session, login_url)
     student_session.post(login_url, data={
         'csrfmiddlewaretoken': csrf,
-        'username': 'demo_stud',
-        'password': 'admin123!'
+        'username': 'utsav_student',
+        'password': 'UtsavPass123!'
     }, headers={'Referer': login_url})
     print("   OK - Student Logged in.")
 

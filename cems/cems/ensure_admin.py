@@ -10,8 +10,8 @@ from accounts.models import Profile
 def stabilize_admins():
     print("Stabilizing Admin accounts...")
     
-    # Target common admin usernames
-    admin_usernames = ['superadmin', 'cems_admin', 'demo_admin']
+    # Target only utsav_admin as the global superadmin
+    admin_usernames = ['utsav_admin']
     
     for username in admin_usernames:
         try:
@@ -25,7 +25,7 @@ def stabilize_admins():
             profile.is_approved = True
             profile.save()
             
-            print(f"   [OK] Stabilized {username}")
+            print(f"   [OK] Stabilized {username} as global super admin")
         except User.DoesNotExist:
             print(f"   [SKIP] User {username} not found")
 

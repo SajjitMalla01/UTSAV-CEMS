@@ -324,7 +324,7 @@ def student_dashboard(request):
         'attended_count':   len(attended_events),
         'total_events':     len(registered_events) + len(attended_events),
         'upcoming_events':  [e for e in registered_events if e.date_time > timezone.now()],
-        'upcoming_registrations': [r for r in regs if r.status == 'REGISTERED' and r.event.date_time > timezone.now()],
+        'upcoming_registrations': [r for r in regs if r.status in ['REGISTERED', 'PENDING'] and r.event.date_time > timezone.now()],
         'events_data':      json.dumps(events_data),
         'recent_comments':  college_wall,
         'my_comments':      my_comments,
@@ -422,14 +422,19 @@ def event_create(request):
 @login_required
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
+    
+    # Secure scoping check: Owner, Global Super Admin, or College Admin of the same college
+    is_owner = (event.created_by == request.user)
+    is_global_admin = request.user.is_superuser
+    is_college_admin = False
     try:
-        if not (event.created_by == request.user or request.user.is_superuser or getattr(request.user.profile, 'is_admin', False)):
-            messages.error(request, 'Permission denied.')
-            return redirect('event_detail', pk=pk)
-    except Exception:
-        if not (event.created_by == request.user or request.user.is_superuser):
-            messages.error(request, 'Permission denied.')
-            return redirect('event_detail', pk=pk)
+        profile = request.user.profile
+        is_college_admin = (profile.role == 'ADMIN' and profile.college == event.college)
+    except: pass
+
+    if not (is_owner or is_global_admin or is_college_admin):
+        messages.error(request, 'Permission denied: You do not have permission to edit this event.')
+        return redirect('event_detail', pk=pk)
 
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES, instance=event)
@@ -445,14 +450,19 @@ def event_update(request, pk):
 @login_required
 def event_delete(request, pk):
     event = get_object_or_404(Event, pk=pk)
+    
+    # Secure scoping check: Owner, Global Super Admin, or College Admin of the same college
+    is_owner = (event.created_by == request.user)
+    is_global_admin = request.user.is_superuser
+    is_college_admin = False
     try:
-        if not (event.created_by == request.user or request.user.is_superuser or getattr(request.user.profile, 'is_admin', False)):
-            messages.error(request, 'Permission denied.')
-            return redirect('event_detail', pk=pk)
-    except Exception:
-        if not (event.created_by == request.user or request.user.is_superuser):
-            messages.error(request, 'Permission denied.')
-            return redirect('event_detail', pk=pk)
+        profile = request.user.profile
+        is_college_admin = (profile.role == 'ADMIN' and profile.college == event.college)
+    except: pass
+
+    if not (is_owner or is_global_admin or is_college_admin):
+        messages.error(request, 'Permission denied: You do not have permission to delete this event.')
+        return redirect('event_detail', pk=pk)
 
     if request.method == 'POST':
         title = event.title
@@ -464,15 +474,20 @@ def event_delete(request, pk):
 
 @login_required
 def approve_event(request, pk):
-    try:
-        if not (request.user.is_superuser or getattr(request.user.profile, 'is_admin', False)):
-            messages.error(request, 'Only admins can approve events.')
-            return redirect('admin_dashboard')
-    except Exception:
-        if not request.user.is_superuser:
-            return redirect('home')
-
     event = get_object_or_404(Event, pk=pk)
+    
+    # Secure scoping check: Global Super Admin or College Admin of the same college
+    is_global_admin = request.user.is_superuser
+    is_college_admin = False
+    try:
+        profile = request.user.profile
+        is_college_admin = (profile.role == 'ADMIN' and profile.college == event.college)
+    except: pass
+
+    if not (is_global_admin or is_college_admin):
+        messages.error(request, 'Permission denied: Only admins of this college can approve events.')
+        return redirect('admin_dashboard')
+
     if request.method == 'POST':
         event.status = 'APPROVED'
         event.save()
@@ -483,15 +498,20 @@ def approve_event(request, pk):
 
 @login_required
 def publish_event(request, pk):
-    try:
-        if not (request.user.is_superuser or getattr(request.user.profile, 'is_admin', False)):
-            messages.error(request, 'Only admins can publish events.')
-            return redirect('admin_dashboard')
-    except Exception:
-        if not request.user.is_superuser:
-            return redirect('home')
-
     event = get_object_or_404(Event, pk=pk)
+    
+    # Secure scoping check: Global Super Admin or College Admin of the same college
+    is_global_admin = request.user.is_superuser
+    is_college_admin = False
+    try:
+        profile = request.user.profile
+        is_college_admin = (profile.role == 'ADMIN' and profile.college == event.college)
+    except: pass
+
+    if not (is_global_admin or is_college_admin):
+        messages.error(request, 'Permission denied: Only admins of this college can publish events.')
+        return redirect('admin_dashboard')
+
     if request.method == 'POST':
         event.status = 'PUBLISHED'
         event.save()

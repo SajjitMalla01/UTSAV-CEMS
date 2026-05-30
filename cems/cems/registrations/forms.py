@@ -57,16 +57,16 @@ class UserRegisterForm(UserCreationForm):
         return user
     
     def send_verification_email(self, user, code):
-        subject = 'Verify Your CEMS Account'
+        subject = 'Verify Your UTSAV Account'
         message = f"""
-        Welcome to College Event Management System!
+        Welcome to UTSAV College Event Portal!
         
         Your verification code is: {code}
         
         Please enter this code to activate your account.
         
         Thank you,
-        CEMS Team
+        UTSAV Team
         """
         send_mail(
             subject,

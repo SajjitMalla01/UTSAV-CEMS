@@ -1,206 +1,207 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Home — Discover Events{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
 
 {% if user.is_authenticated %}
-<!-- AUTHENTICATED HERO -->
-<div class="bg-white border-b border-slate-200">
- <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
- <div>
- <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">Authenticated User</p>
- <h1 class="text-4xl md:text-5xl font-bold mb-3 leading-tight text-slate-900">
- {{ user.get_full_name|default:user.username }}
- </h1>
- <div class="flex flex-wrap items-center gap-3">
- <span class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold uppercase tracking-wide text-slate-700">
- {% if user.is_superuser or user.profile.role == 'ADMIN' %} Administrator
- {% elif user.profile.role == 'STAFF' %} Staff Member
- {% else %} Student{% endif %}
- </span>
- {% if current_college %}<span class="px-3 py-1 rounded-full bg-brand/10 text-brand border border-brand/20 text-xs font-medium"> {{ current_college.name }}</span>{% endif %}
- </div>
- </div>
- <div class="flex flex-wrap gap-3">
- {% if user.is_superuser or user.profile.role == 'ADMIN' %}
- <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all text-sm">Admin Dashboard</a>
- {% elif user.profile.role == 'STAFF' %}
- <a href="{% url 'staff_dashboard' %}" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all text-sm">Staff Dashboard</a>
- <a href="{% url 'event_create' %}" class="px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl transition-all text-sm">Create Event</a>
- {% else %}
- <a href="{% url 'student_dashboard' %}" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all text-sm">Student Dashboard</a>
- {% endif %}
- </div>
- </div>
+<!-- Authenticated hero -->
+<div class="bg-white border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <p class="text-sm text-gray-500 mb-1">Welcome back</p>
+      <h1 class="text-2xl font-semibold text-gray-900">{{ user.get_full_name|default:user.username }}</h1>
+      <div class="flex flex-wrap items-center gap-2 mt-2">
+        <span class="px-2.5 py-1 rounded-full bg-gray-100 border border-gray-200 text-xs font-medium text-gray-600">
+          {% if user.is_superuser or user.profile.role == 'ADMIN' %}Administrator
+          {% elif user.profile.role == 'STAFF' %}Staff
+          {% else %}Student{% endif %}
+        </span>
+        {% if current_college %}<span class="px-2.5 py-1 rounded-full bg-brand-light text-brand border border-blue-200 text-xs font-medium">{{ current_college.name }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {% if user.is_superuser or user.profile.role == 'ADMIN' %}
+      <a href="{% url 'admin_dashboard' %}" class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Admin Dashboard</a>
+      {% elif user.profile.role == 'STAFF' %}
+      <a href="{% url 'staff_dashboard' %}" class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Dashboard</a>
+      <a href="{% url 'event_create' %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg transition-colors">Create event</a>
+      {% else %}
+      <a href="{% url 'student_dashboard' %}" class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">My Dashboard</a>
+      {% endif %}
+    </div>
+  </div>
 </div>
+
 {% else %}
-<!-- GUEST HERO -->
-<div class="bg-white border-b border-slate-200">
- <div class="max-w-5xl mx-auto px-6 py-28 text-center">
- <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-widest mb-8">
- Institutional Portal
- </div>
- <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6 text-slate-900">
- Agora Institutional Portal
- </h1>
- <p class="text-lg text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
- Access the official portal to register for campus events, manage attendance, and view institutional schedules.
- </p>
- <div class="flex flex-col sm:flex-row justify-center gap-4">
- <a href="{% url 'register' %}" class="px-8 py-4 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all text-base">
- Register Account
- </a>
- <a href="{% url 'login' %}" class="px-8 py-4 bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-all text-base">
- Portal Login
- </a>
- </div>
- <!-- Floating stats -->
- <div class="mt-16 flex flex-wrap justify-center gap-8 text-center">
- <div><p class="font-mono text-3xl font-bold text-slate-900">{{ total_events|default:"–" }}</p><p class="text-xs text-slate-500 uppercase tracking-widest">Active Events</p></div>
- <div class="w-px bg-slate-200"></div>
- <div><p class="font-mono text-3xl font-bold text-slate-900">{{ total_colleges|default:"–" }}</p><p class="text-xs text-slate-500 uppercase tracking-widest">Institutions</p></div>
- <div class="w-px bg-slate-200"></div>
- <div><p class="font-mono text-3xl font-bold text-slate-900">{{ total_students|default:"–" }}</p><p class="text-xs text-slate-500 uppercase tracking-widest">Registered Users</p></div>
- </div>
- </div>
+<!-- Guest hero -->
+<div class="bg-white border-b border-gray-200">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
+    <h1 class="text-3xl sm:text-4xl font-semibold text-gray-900 mb-4">College Event Management</h1>
+    <p class="text-base text-gray-500 mb-8 max-w-xl mx-auto">
+      Register for campus events, manage attendance, and view upcoming schedules — all in one place.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-3">
+      <a href="{% url 'register' %}" class="px-5 py-2.5 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Create account</a>
+      <a href="{% url 'login' %}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg transition-colors">Sign in</a>
+    </div>
+
+    {% if total_events or total_colleges or total_students %}
+    <div class="mt-12 flex flex-wrap justify-center gap-10 text-center">
+      {% if total_events %}
+      <div>
+        <p class="text-2xl font-semibold text-gray-900">{{ total_events }}</p>
+        <p class="text-sm text-gray-500 mt-0.5">Active events</p>
+      </div>
+      <div class="w-px bg-gray-200"></div>
+      {% endif %}
+      {% if total_colleges %}
+      <div>
+        <p class="text-2xl font-semibold text-gray-900">{{ total_colleges }}</p>
+        <p class="text-sm text-gray-500 mt-0.5">Colleges</p>
+      </div>
+      <div class="w-px bg-gray-200"></div>
+      {% endif %}
+      {% if total_students %}
+      <div>
+        <p class="text-2xl font-semibold text-gray-900">{{ total_students }}</p>
+        <p class="text-sm text-gray-500 mt-0.5">Registered users</p>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% endif %}
 
-<!-- EVENTS SECTION -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
- <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
- <div>
- <p class="text-xs font-bold uppercase tracking-widest text-brand mb-2">Event Roster</p>
- <h2 class="text-3xl font-bold text-slate-900">Scheduled Events</h2>
- </div>
- <!-- Category Filters -->
- <div class="flex flex-wrap gap-2" id="cat-filters">
- <button class="cat-btn active-cat px-4 py-2 rounded-lg text-sm font-semibold bg-slate-900 text-white border border-slate-900 transition-all" data-cat="all">All</button>
- <button class="cat-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-slate-600 border border-slate-200 transition-all" data-cat="academic">Academic</button>
- <button class="cat-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-slate-600 border border-slate-200 transition-all" data-cat="cultural">Cultural</button>
- <button class="cat-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-slate-600 border border-slate-200 transition-all" data-cat="sports">Sports</button>
- <button class="cat-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-slate-600 border border-slate-200 transition-all" data-cat="technology">Technology</button>
- <button class="cat-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-slate-600 border border-slate-200 transition-all" data-cat="music">Music</button>
- </div>
- </div>
+<!-- Events section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <h2 class="text-lg font-semibold text-gray-900">Upcoming events</h2>
+    <div class="flex flex-wrap gap-2" id="cat-filters">
+      <button class="cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-900 text-white border border-gray-900 transition-all" data-cat="all">All</button>
+      <button class="cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all" data-cat="academic">Academic</button>
+      <button class="cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all" data-cat="cultural">Cultural</button>
+      <button class="cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all" data-cat="sports">Sports</button>
+      <button class="cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all" data-cat="technology">Technology</button>
+    </div>
+  </div>
 
- {% if events %}
- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="events-grid">
- {% for event in events %}
- <div class="event-card bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col"
- data-cat="{{ event.category|lower }}">
- <!-- Card Header -->
- <div class="h-32 bg-slate-100 border-b border-slate-200 relative flex items-center justify-center text-5xl select-none">
-  {% if event.emoji %}{{ event.emoji }}{% else %}{{ event.get_category_display }}{% endif %}
- <!-- Date chip -->
- <div class="absolute top-4 left-4 bg-white/95 backdrop-blur rounded-xl px-3 py-2 text-center shadow-md">
- <p class="text-[0.6rem] font-black uppercase tracking-widest text-brand">{{ event.date_time|date:"M" }}</p>
- <p class="font-mono text-xl font-black text-ink-900 leading-none">{{ event.date_time|date:"d" }}</p>
- </div>
- {% if event.is_featured %}
- <div class="absolute top-4 right-4 bg-amber-400 text-amber-900 text-[0.6rem] font-black px-2.5 py-1 rounded-full uppercase shadow"> Featured</div>
- {% endif %}
- <!-- Status -->
- <div class="absolute bottom-4 right-4">
- <span class="px-2 py-1 rounded-full text-[0.6rem] font-black uppercase backdrop-blur-sm {% if event.status == 'PUBLISHED' %}bg-emerald-500/90 text-white {% elif event.status == 'PENDING' %}bg-amber-500/90 text-white {% else %}bg-gray-500/80 text-white{% endif %}">
- {{ event.status }}
- </span>
- </div>
- </div>
+  {% if events %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="events-grid">
+    {% for event in events %}
+    <div class="event-card bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col hover:shadow-sm transition-shadow" data-cat="{{ event.category|lower }}">
+      <!-- Header -->
+      <div class="h-28 bg-gray-100 border-b border-gray-200 relative flex items-center justify-center">
+        <span class="text-sm font-medium text-gray-500">{{ event.get_category_display }}</span>
+        <!-- Date chip -->
+        <div class="absolute top-3 left-3 bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-center shadow-sm">
+          <p class="text-xs font-medium text-brand leading-none">{{ event.date_time|date:"M" }}</p>
+          <p class="text-lg font-semibold text-gray-900 leading-tight">{{ event.date_time|date:"d" }}</p>
+        </div>
+        {% if event.is_featured %}
+        <div class="absolute top-3 right-3 bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full border border-amber-200">Featured</div>
+        {% endif %}
+        <!-- Status -->
+        <div class="absolute bottom-3 right-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-medium
+            {% if event.status == 'PUBLISHED' %}bg-green-100 text-green-700
+            {% elif event.status == 'PENDING' %}bg-amber-100 text-amber-700
+            {% else %}bg-gray-100 text-gray-600{% endif %}">
+            {% if event.status == 'PENDING' %}Pending approval{% else %}{{ event.status|capfirst }}{% endif %}
+          </span>
+        </div>
+      </div>
 
- <!-- Card Body -->
- <div class="p-5 flex flex-col flex-1">
- <span class="inline-block mb-2 px-2 py-1 bg-slate-100 text-slate-500 text-xs font-bold uppercase rounded">{{ event.get_category_display|default:event.category }}</span>
- <h3 class="text-lg font-bold text-slate-900 mb-3">{{ event.title }}</h3>
- <div class="space-y-1.5 mb-4 text-sm text-slate-500 flex-1">
- <div class="flex items-center gap-2"><span></span><span class="font-mono">{{ event.date_time|time:"h:i A" }}{% if event.end_time %} – {{ event.end_time|time:"h:i A" }}{% endif %}</span></div>
- <div class="flex items-center gap-2"><span></span><span class="truncate">{{ event.venue }}</span></div>
- </div>
- <!-- Capacity Bar -->
- <div class="mb-4">
- <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
- <span>Capacity</span>
- <span class="font-mono">{{ event.get_registered_count|default:0 }} / {{ event.capacity }}</span>
- </div>
- <div class="h-1 bg-slate-200 rounded overflow-hidden">
- <div class="h-full bg-brand progress-fill transition-all duration-1000"
- data-pct="{% widthratio event.get_registered_count|default:0 event.capacity|default:1 100 %}"></div>
- </div>
- </div>
- <!-- Actions -->
- <div class="flex gap-2 mt-auto">
- <a href="{% url 'event_detail' event.pk %}" class="flex-1 text-center py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Details</a>
- {% if user.is_authenticated and user.profile.role == 'STUDENT' and event.status == 'PUBLISHED' %}
- {% if not event.is_full %}
- <a href="{% url 'register_event' event.pk %}" class="flex-1 text-center py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-dark rounded-lg transition-all">Register</a>
- {% else %}
- <button disabled class="flex-1 py-2 text-sm font-semibold text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed">Full</button>
- {% endif %}
- {% endif %}
- </div>
- </div>
- </div>
- {% endfor %}
- </div>
+      <!-- Body -->
+      <div class="p-4 flex flex-col flex-1">
+        <span class="inline-block mb-2 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded">{{ event.get_category_display|default:event.category }}</span>
+        <h3 class="text-sm font-semibold text-gray-900 mb-2">{{ event.title }}</h3>
+        <div class="space-y-1 mb-3 flex-1">
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>{{ event.date_time|time:"h:i A" }}{% if event.end_time %} – {{ event.end_time|time:"h:i A" }}{% endif %}</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            <span class="truncate">{{ event.venue }}</span>
+          </div>
+        </div>
+        <!-- Capacity -->
+        <div class="mb-3">
+          <div class="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Capacity</span>
+            <span>{{ event.get_registered_count|default:0 }} / {{ event.capacity }}</span>
+          </div>
+          <div class="h-1 bg-gray-100 rounded overflow-hidden">
+            <div class="h-full bg-brand progress-fill transition-all duration-700"
+              data-pct="{% widthratio event.get_registered_count|default:0 event.capacity|default:1 100 %}"></div>
+          </div>
+        </div>
+        <!-- Actions -->
+        <div class="flex gap-2 mt-auto">
+          <a href="{% url 'event_detail' event.pk %}" class="flex-1 text-center py-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">View</a>
+          {% if user.is_authenticated and user.profile.role == 'STUDENT' and event.status == 'PUBLISHED' %}
+            {% if not event.is_full %}
+            <a href="{% url 'register_event' event.pk %}" class="flex-1 text-center py-1.5 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Register</a>
+            {% else %}
+            <button disabled class="flex-1 py-1.5 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">Full</button>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
- <!-- No results for filter -->
- <div id="no-filter-result" class="hidden text-center py-24">
- <p class="text-5xl mb-4"></p>
- <h3 class="text-2xl text-ink-700 mb-2">No events in this category</h3>
- <p class="text-ink-400">Try selecting a different filter above.</p>
- </div>
+  <div id="no-filter-result" class="hidden text-center py-16 border border-gray-200 rounded-xl bg-white mt-4">
+    <p class="text-sm text-gray-500">No events in this category.</p>
+  </div>
 
- {% else %}
- <!-- Empty State -->
- <div class="text-center py-28 bg-white rounded-3xl border border-ink-100">
- <p class="text-6xl mb-6"></p>
- <h3 class="text-3xl text-ink-800 mb-3">No Events Yet</h3>
- <p class="text-ink-400 max-w-md mx-auto mb-8">There are no upcoming events right now. Check back soon or create one!</p>
- {% if user.is_authenticated and user.profile.role == 'STAFF' %}
- <a href="{% url 'event_create' %}" class="inline-block px-8 py-3 bg-brand text-white font-bold rounded-2xl shadow hover:bg-brand-dark transition-colors">Create First Event</a>
- {% endif %}
- </div>
- {% endif %}
+  {% else %}
+  <div class="text-center py-16 bg-white rounded-xl border border-gray-200">
+    <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    <p class="text-sm font-medium text-gray-500 mb-4">No events found.</p>
+    {% if user.is_authenticated and user.profile.role == 'STAFF' %}
+    <a href="{% url 'event_create' %}" class="inline-block px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-dark rounded-lg transition-colors">Create event</a>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
- // Progress bars
- document.querySelectorAll('.progress-fill').forEach(bar => {
- const pct = Math.min(parseInt(bar.dataset.pct) || 0, 100);
- setTimeout(() => {
- bar.style.width = pct + '%';
- if (pct >= 90) bar.classList.replace('bg-brand', 'bg-red-500');
- }, 200);
- });
+  document.querySelectorAll('.progress-fill').forEach(bar => {
+    const pct = Math.min(parseInt(bar.dataset.pct) || 0, 100);
+    setTimeout(() => {
+      bar.style.width = pct + '%';
+      if (pct >= 90) bar.classList.replace('bg-brand', 'bg-red-500');
+    }, 200);
+  });
 
- // Category filters
- const btns = document.querySelectorAll('.cat-btn');
- const cards = document.querySelectorAll('.event-card');
- const noResult = document.getElementById('no-filter-result');
+  const btns = document.querySelectorAll('.cat-btn');
+  const cards = document.querySelectorAll('.event-card');
+  const noResult = document.getElementById('no-filter-result');
 
- btns.forEach(btn => {
- btn.addEventListener('click', () => {
- btns.forEach(b => {
- b.classList.remove('active-cat', 'bg-ink-900', 'text-white', 'border-ink-900');
- b.classList.add('bg-white', 'text-ink-600', 'border-ink-200');
- });
- btn.classList.add('active-cat', 'bg-ink-900', 'text-white', 'border-ink-900');
- btn.classList.remove('bg-white', 'text-ink-600', 'border-ink-200');
-
- const cat = btn.dataset.cat;
- let visible = 0;
- cards.forEach(card => {
- const show = cat === 'all' || card.dataset.cat === cat;
- card.style.display = show ? '' : 'none';
- if (show) visible++;
- });
- if (noResult) noResult.style.display = visible === 0 ? '' : 'none';
- });
- });
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => {
+        b.className = 'cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all';
+      });
+      btn.className = 'cat-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-900 text-white border border-gray-900 transition-all';
+      const cat = btn.dataset.cat;
+      let visible = 0;
+      cards.forEach(card => {
+        const show = cat === 'all' || card.dataset.cat === cat;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      if (noResult) noResult.style.display = visible === 0 ? '' : 'none';
+    });
+  });
 });
 </script>
 {% endblock %}

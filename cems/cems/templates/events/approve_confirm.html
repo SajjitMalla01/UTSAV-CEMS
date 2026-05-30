@@ -2,19 +2,21 @@
 {% block title %}Approve Event{% endblock %}
 {% block content %}
 <div class="max-w-lg mx-auto px-4 py-16">
- <div class="bg-white rounded-2xl border border-ink-100 shadow-lg p-8 text-center">
- <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl mx-auto mb-5"></div>
- <h1 class="text-3xl font-bold text-ink-900 mb-2">Approve Event?</h1>
- <p class="text-ink-500 mb-2">You are about to approve:</p>
- <p class="font-bold text-ink-900 text-lg mb-6">{{ event.title }}</p>
- <p class="text-sm text-ink-400 mb-8">Approving will allow the event to be published. It will notify the creator.</p>
- <form method="post">
- {% csrf_token %}
- <div class="flex gap-3 justify-center">
- <a href="{% url 'event_detail' event.pk %}" class="px-6 py-3 text-sm font-semibold text-ink-600 bg-ink-50 rounded-xl border border-ink-200 hover:bg-ink-100 transition-colors">Cancel</a>
- <button type="submit" class="px-8 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow transition-colors">Yes, Approve</button>
- </div>
- </form>
- </div>
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
+    <div class="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-3xl mx-auto mb-6">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <h1 class="text-2xl font-semibold text-gray-900 mb-2">Approve Event?</h1>
+    <p class="text-sm text-gray-500 mb-2">You are about to approve:</p>
+    <p class="font-bold text-gray-900 text-lg mb-6">{{ event.title }}</p>
+    <p class="text-sm text-gray-500 mb-8">Approving will allow the event to be published. It will notify the creator.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="flex gap-3 justify-center">
+        <a href="{% url 'event_detail' event.pk %}" class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors">Cancel</a>
+        <button type="submit" class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors">Yes, Approve</button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}
