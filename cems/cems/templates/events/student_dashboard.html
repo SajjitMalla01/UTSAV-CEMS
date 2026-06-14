@@ -88,7 +88,7 @@
               </div>
               <div class="flex items-center gap-2 self-end md:self-auto">
                 {% if reg.status == 'REGISTERED' %}
-                <button onclick="showTicket('{{ reg.event.title|escapejs }}', '{% url 'verify_registration' reg.id %}')" 
+                <button data-title="{{ reg.event.title }}" data-url="{% url 'verify_registration' reg.id %}" onclick="showTicket(this.dataset.title, this.dataset.url)" 
                   class="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
                   View Pass
                 </button>
@@ -120,7 +120,7 @@
                 <span>{{ attended_count }} / {{ total_events }}</span>
               </div>
               <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-brand rounded-full" style="width: {% widthratio attended_count total_events|default:1 100 %}%"></div>
+                <div class="h-full bg-brand rounded-full" data-width="{% widthratio attended_count total_events|default:1 100 %}"></div>
               </div>
             </div>
             <p class="text-xs text-gray-500 leading-relaxed italic">

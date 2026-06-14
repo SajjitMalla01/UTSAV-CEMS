@@ -289,22 +289,21 @@ def verify_registration(request, registration_id):
         )
         return redirect("home")
 
-    if request.method == "POST":
-        if registration.status == "REGISTERED":
-            registration.status = "ATTENDED"
-            registration.save()
-            messages.success(
-                request,
-                f"Confirmed! {registration.user.get_full_name() or registration.user.username} marked as Attended.",
-            )
-        elif registration.status == "ATTENDED":
-            messages.info(request, "Attendance already verified.")
-        elif registration.status == "PENDING":
-            messages.warning(
-                request, "Error: This registration is still pending approval."
-            )
-        elif registration.status == "CANCELLED":
-            messages.error(request, "Error: This registration was cancelled.")
+    if registration.status == "REGISTERED":
+        registration.status = "ATTENDED"
+        registration.save()
+        messages.success(
+            request,
+            f"Confirmed! {registration.user.get_full_name() or registration.user.username} marked as Attended.",
+        )
+    elif registration.status == "ATTENDED":
+        messages.info(request, "Attendance already verified.")
+    elif registration.status == "PENDING":
+        messages.warning(
+            request, "Error: This registration is still pending approval."
+        )
+    elif registration.status == "CANCELLED":
+        messages.error(request, "Error: This registration was cancelled.")
 
     return render(
         request,

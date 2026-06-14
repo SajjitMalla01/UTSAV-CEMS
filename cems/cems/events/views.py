@@ -330,7 +330,7 @@ def staff_dashboard(request):
 
     from accounts.models import EventComment
 
-    recent_comments = EventComment.objects.filter(event__college=college).order_by(
+    recent_comments = EventComment.objects.filter(event__created_by=request.user).order_by(
         "-created_at"
     )[:15]
 

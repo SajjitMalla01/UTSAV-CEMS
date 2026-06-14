@@ -195,5 +195,10 @@
   }, 4000);
 </script>
 {% block extra_js %}{% endblock %}
+<script>
+  // Dynamically apply styles to avoid IDE parser errors with Django tags in inline styles
+  document.querySelectorAll('[data-bg]').forEach(el => el.style.backgroundColor = el.dataset.bg);
+  document.querySelectorAll('[data-width]').forEach(el => el.style.width = el.dataset.width + '%');
+</script>
 </body>
 </html>

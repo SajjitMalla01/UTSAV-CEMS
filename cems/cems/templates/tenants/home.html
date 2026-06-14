@@ -43,7 +43,7 @@
         
         <div>
           <!-- College logo -->
-          <div class="w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold text-white mb-6 shadow-sm" style="background-color: {{ college.primary_color|default:'#2563eb' }};">
+          <div class="w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold text-white mb-6 shadow-sm" data-bg="{{ college.primary_color|default:'#2563eb' }}">
             {{ college.name|first|upper }}
           </div>
 
@@ -77,7 +77,7 @@
           </a>
           <a href="/colleges/{{ college.slug }}/login/"
             class="py-2.5 text-center text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-            style="background-color: {{ college.primary_color|default:'#2563eb' }};">
+            data-bg="{{ college.primary_color|default:'#2563eb' }}">
             Sign In &rarr;
           </a>
         </div>

@@ -192,7 +192,7 @@
               <span>{{ event.get_registered_count }} / {{ event.capacity }}</span>
             </div>
             <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div class="h-full bg-brand rounded-full transition-all duration-700" style="width: {% widthratio event.get_registered_count event.capacity|default:1 100 %}%"></div>
+              <div class="h-full bg-brand rounded-full transition-all duration-700" data-width="{% widthratio event.get_registered_count event.capacity|default:1 100 %}"></div>
             </div>
           </div>
 

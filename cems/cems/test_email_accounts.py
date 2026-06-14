@@ -30,10 +30,11 @@ def test_smtp(username, password, description):
         return False
 
 
-# Test the mallasajjit@gmail.com account
-test_smtp("mallasajjit@gmail.com", "dnbgpmdpziuafzir", "Mallasajjit Account")
-
-# Test the np03cs4a230357@heraldcollege.edu.np account
-test_smtp(
-    "np03cs4a230357@heraldcollege.edu.np", "mssfwzidmrajqrnn", "Herald College Account"
-)
+if __name__ == "__main__":
+    # Test the mallasajjit@gmail.com account
+    test_smtp("mallasajjit@gmail.com", "dnbgpmdpziuafzir", "Mallasajjit Account")
+    
+    # Test the np03cs4a230357@heraldcollege.edu.np account
+    test_smtp(
+        "np03cs4a230357@heraldcollege.edu.np", "mssfwzidmrajqrnn", "Herald College Account"
+    )

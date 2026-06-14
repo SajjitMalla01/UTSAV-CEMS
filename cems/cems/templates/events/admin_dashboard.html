@@ -45,6 +45,13 @@
         </span>
         {% if pending_events > 0 %}<span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs">{{ pending_events }}</span>{% endif %}
       </button>
+      <button onclick="goTab('staff', this)" class="sb-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors text-left">
+        <span class="flex items-center gap-2.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          Staff Approvals
+        </span>
+        {% if pending_staff_count > 0 %}<span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs">{{ pending_staff_count }}</span>{% endif %}
+      </button>
       
       <div class="h-px bg-gray-100 my-2 mx-2"></div>
       
@@ -95,7 +102,7 @@
             {% for label, count, color in status_breakdown %}
             <div class="flex items-center justify-between text-sm">
               <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full" style="background-color: {{ color }}"></div>
+                <div class="w-2 h-2 rounded-full" data-bg="{{ color }}"></div>
                 <span class="text-gray-600">{{ label|capfirst }}</span>
               </div>
               <span class="font-medium text-gray-900">{{ count }}</span>
@@ -131,7 +138,7 @@
                 <td class="px-5 py-3.5">
                   <div class="flex items-center gap-2">
                     <div class="flex-1 w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div class="h-full bg-brand rounded-full" style="width: {% widthratio e.reg_count e.capacity|default:1 100 %}%"></div>
+                      <div class="h-full bg-brand rounded-full" data-width="{% widthratio e.reg_count e.capacity|default:1 100 %}"></div>
                     </div>
                     <span class="text-xs text-gray-600">{{ e.reg_count }}/{{ e.capacity }}</span>
                   </div>
@@ -233,6 +240,48 @@
       </div>
     </div>
 
+    <!-- Staff Approvals tab -->
+    <div class="hidden space-y-5" id="tab-staff">
+      <h2 class="text-base font-semibold text-gray-900">Pending Staff Approvals</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="px-5 py-3 text-xs font-medium text-gray-500">Name</th>
+                <th class="px-5 py-3 text-xs font-medium text-gray-500">Username</th>
+                <th class="px-5 py-3 text-xs font-medium text-gray-500">Email</th>
+                <th class="px-5 py-3 text-xs font-medium text-gray-500 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for staff in pending_staff %}
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-5 py-3.5">
+                  <p class="text-sm font-medium text-gray-900">{{ staff.user.get_full_name|default:"-" }}</p>
+                </td>
+                <td class="px-5 py-3.5 text-sm text-gray-600">{{ staff.user.username }}</td>
+                <td class="px-5 py-3.5 text-sm text-gray-600">{{ staff.user.email|default:"-" }}</td>
+                <td class="px-5 py-3.5 text-right">
+                  <form action="{% url 'approve_staff' staff.user.id %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm">Approve</button>
+                  </form>
+                  <form action="{% url 'reject_staff' staff.user.id %}" method="post" class="inline ml-2">
+                    {% csrf_token %}
+                    <button type="submit" class="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors shadow-sm">Reject</button>
+                  </form>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="py-12 text-center text-gray-500 text-sm">No pending staff approvals.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Analytics tab -->
     <div class="hidden space-y-5" id="tab-analytics">
       <h2 class="text-base font-semibold text-gray-900">Analytics</h2>
@@ -255,7 +304,7 @@
                 <span>{{ e.reg_count }} reg</span>
               </div>
               <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-brand rounded-full transition-all" style="width: {% if e.reg_count > 0 %}{% widthratio e.att_count e.reg_count 100 %}{% else %}0{% endif %}%"></div>
+                <div class="h-full bg-brand rounded-full transition-all" data-width="{% if e.reg_count > 0 %}{% widthratio e.att_count e.reg_count 100 %}{% else %}0{% endif %}"></div>
               </div>
             </div>
             {% empty %}
@@ -361,7 +410,7 @@
   let calendar;
 
   function goTab(id, btn) {
-    ['tab-dashboard', 'tab-pending', 'tab-events', 'tab-analytics', 'tab-tenants', 'tab-calendar', 'tab-social'].forEach(tid => {
+    ['tab-dashboard', 'tab-pending', 'tab-staff', 'tab-events', 'tab-analytics', 'tab-tenants', 'tab-calendar', 'tab-social'].forEach(tid => {
       const el = document.getElementById(tid);
       if(el) el.classList.add('hidden');
     });
