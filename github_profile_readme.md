@@ -12,8 +12,8 @@ My main focus right now is **UTSAV** — a multitenant college event management 
 - **Data & Databases:** SQLite, PySpark
 
 ## 📫 How to reach me
-- **LinkedIn:** [linkedin.com/in/your-profile](https://linkedin.com/in/your-profile)
-- **Email:** [your.email@example.com](mailto:your.email@example.com)
+- **LinkedIn:** [linkedin.com/in/your-profile](www.linkedin.com/in/sajjit-malla-b65142294)
+- **Email:** [your.email@example.com](mailto:malla.sajjit010@gmail.com)
 
 ---
 *Always eager to learn new technologies and build interesting projects.*
